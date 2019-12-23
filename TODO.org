@@ -1,0 +1,7 @@
+#+TITLE: TODO
+
+Get org/org-cal setup here
+https://git.sr.ht/~secstate/dotfiles/tree/master/emacs/.config/doom
+
+Python lsp setup
+https://framagit.org/gagbo/doom-config

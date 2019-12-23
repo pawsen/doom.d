@@ -1,0 +1,18 @@
+# doom.d
+
+Personal configuration for [doom-emacs](https://github.com/hlissner/doom-emacs)
+
+## Installation
+
+``` sh
+$ git clone -b develop --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
+$ git clone https://github.com/areina/doom.d.git ~/.doom.d
+$ ~/.emacs.d/bin/doom install
+```
+
+## Update
+
+``` sh
+$ ~/.emacs.d/bin/doom upgrade
+$ ~/.emacs.d/bin/doom update
+```
