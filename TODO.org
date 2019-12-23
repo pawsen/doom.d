@@ -1,7 +1,14 @@
 #+TITLE: TODO
 
-Get org/org-cal setup here
-https://git.sr.ht/~secstate/dotfiles/tree/master/emacs/.config/doom
-
+* python
 Python lsp setup
 https://framagit.org/gagbo/doom-config
+
+* dictionaries
+https://github.com/abo-abo/define-word
+
+* org
+[[http://pragmaticemacs.com/emacs/a-workflow-to-quickly-add-photos-to-org-mode-notes/][Quickly add photos taken by phone to notes]]
+
+Get org/org-cal setup here
+https://git.sr.ht/~secstate/dotfiles/tree/master/emacs/.config/doom
