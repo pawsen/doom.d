@@ -9,11 +9,9 @@
 
 (setq ispell-dictionary "english")
 
-;; arduino
-(use-package! arduino-mode
-  :defer t
-  :mode "\\.ino$"
-  :mode "\\.pde$")
+;; exclude from recent file list
+(after! recentf
+  (add-to-list 'recentf-exclude "/var"))
 
 (defun +advice/xref-set-jump (&rest args)
   (require 'lsp-ui)
@@ -174,3 +172,4 @@
 (load! "+bindings")
 (load! "+ranger")
 (load! "+magit")
+(load! "+mail")

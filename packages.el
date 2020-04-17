@@ -18,7 +18,8 @@
 (package! company-quickhelp)
 (package! lsp-ivy)
 (package! nov) ; major mode for reading epub
+(package! org-msg) ; mix org-mode and Message mode
 
 ;; modes
-(package! arduino-mode)
+;; (package! arduino-mode)
 (package! symbol-overlay) ; mark symbols
