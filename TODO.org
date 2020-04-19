@@ -1,5 +1,7 @@
 #+TITLE: TODO
 
+* configs
+https://github.com/yiufung/dot-emacs/blob/master/init.el
 * python
 Python lsp setup
 https://framagit.org/gagbo/doom-config

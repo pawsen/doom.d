@@ -76,11 +76,10 @@
         org-msg-signature "
 
  Regards,
-
  #+begin_signature
  -- *Paw* \\\\
- /One Emacs to rule them all/
  #+end_signature")
+  (defalias 'html-mail-mode 'org-msg-mode) ; An easy-to-remember name
   )
 
 (provide '+mail)
