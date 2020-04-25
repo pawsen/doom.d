@@ -168,8 +168,21 @@
 ;;           :desc "Inspect at point"      "d" #'jupyter-inspect-at-point
 ;;           )))
 
+;; copy files in dired asynchronius with rsync
+;; dired-rsync is already included in dired module
+(use-package dired-rsync
+  :demand t
+  :after ranger
+  :bind (:map ranger-normal-mode-map ("r" . dired-rsync))
+  :config (add-to-list 'mode-line-misc-info '(:eval dired-rsync-modeline-status 'append)))
+
+(map!
+ (:leader
+   (:prefix "a"
+    :desc "Ranger" "r" #'ranger
+    :desc "Deer" "d" #'deer)))
+
 
 (load! "+bindings")
-(load! "+ranger")
 (load! "+magit")
 (load! "+mail")

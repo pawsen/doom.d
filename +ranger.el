@@ -5,6 +5,12 @@
   :config
   (set-popup-rule! "^\\*ranger" :ignore t))
 
+(use-package dired-rsync
+  :demand t
+  :after ranger
+  :bind (:map ranger-normal-mode-map ("r" . dired-rsync))
+  :config (add-to-list 'mode-line-misc-info '(:eval dired-rsync-modeline-status 'append)))
+
 (map!
  (:leader
    (:prefix "a"

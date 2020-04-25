@@ -18,7 +18,7 @@
 (package! company-quickhelp)
 (package! lsp-ivy)
 (package! nov) ; major mode for reading epub
-(package! org-msg) ; mix org-mode and Message mode
+(package! org-msg) ; mix org-mode and Message mode. For emails
 
 ;; modes
 ;; (package! arduino-mode)

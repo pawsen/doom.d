@@ -3,11 +3,19 @@
 ;; see additional config here
 ;; https://github.com/kandread/doom-emacs-private/blob/master/config.el#L43
 
+(map!
+ (:leader
+   (:prefix "a"
+    :desc "mu4e" "m" #'mu4e
+    :desc "mu4e compose" "c" #'mu4e-compose-new)))
 
 ;; exclude from recent file list
 (after! recentf
   (add-to-list 'recentf-exclude ".mail"))
 
+;; standard path for mu4e compiled from git
+;; (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+(add-load-path! "/usr/local/share/emacs/site-lisp/mu4e")
 (after! mu4e
   ;; don't use rich text emails by default
   (remove-hook! mu4e-compose-mode #'org-mu4e-compose-org-mode)
