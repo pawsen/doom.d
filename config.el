@@ -9,6 +9,9 @@
 
 (setq ispell-dictionary "english")
 
+;; don't undo too much at once
+(setq evil-want-fine-undo t)
+
 ;; exclude from recent file list
 (after! recentf
   (add-to-list 'recentf-exclude "/var"))
