@@ -75,7 +75,7 @@
         :n "G" #'org-msg-goto-body)
 
   ;;(org-msg-mode)
-  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil tex:dvipng"
+  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil tex:dvipng \\n:t"
         org-msg-startup "hidestars indent inlineimages"
         org-greeting-fmt "\nHi *%s*,\n\n"
         org-msg-greeting-name-limit 3
@@ -89,5 +89,43 @@
  #+end_signature")
   (defalias 'html-mail-mode 'org-msg-mode) ; An easy-to-remember name
   )
+
+
+;; automatic resize images. Enabled by default
+;; https://emacs.stackexchange.com/a/47614
+(defvar mu4e-resize-image-types '("jpg" "png" "svg" "jpeg")
+  "List of attached image types to resize.")
+
+(defvar mu4e-resize-image nil "if t, then automatic resize images")
+
+(defun mu4e-resize-image-attachments ()
+  (when mu4e-resize-image ; unless is the 'no-then' form of when
+    (let (cmds
+      (image-types
+       (mapconcat #'identity mu4e-resize-image-types "\\|")))
+      (save-excursion
+    (message-goto-body-1)
+    (while (re-search-forward 
+        (format "<#part.+\\(filename=\"\\)\\(.+\\(\\.%s\\)\\)\""
+            image-types)
+        nil t)
+      (let* ((infile (match-string-no-properties 2))
+         (outfile (concat (temporary-file-directory)
+                  (file-name-nondirectory infile))))
+        (push (format "convert %s -resize 600 %s"
+              (shell-quote-argument infile)
+              (shell-quote-argument outfile))
+          cmds)
+        (replace-match outfile t t nil 2)))
+    (mapcar #'shell-command cmds)))))
+
+(add-hook 'message-send-hook 'mu4e-resize-image-attachments)
+
+(defun mu4e-toggle-resize-image()
+  "Toggle automatic resizing of images to size 600px on largest
+side, while keeping aspect ratio"
+  (interactive)
+  (set (make-local-variable 'mu4e-resize-image) (not (symbol-value 'mu4e-resize-image)))
+  (message "mu4e-resize-image toggled (= %s)" (symbol-value 'mu4e-resize-image)) )
 
 (provide '+mail)
