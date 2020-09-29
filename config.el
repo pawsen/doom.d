@@ -42,13 +42,26 @@
   :bind (:map ranger-normal-mode-map ("r" . dired-rsync))
   :config (add-to-list 'mode-line-misc-info '(:eval dired-rsync-modeline-status 'append)))
 
+(use-package  ox-moderncv
+  :init (require 'ox-moderncv))
+
+
+(after! org (add-hook 'org-mode-hook 'turn-on-flyspell))
+
+
 (map!
  (:leader
    (:prefix "a"
     :desc "Ranger" "r" #'ranger
     :desc "Deer" "d" #'deer)))
 
+;; Don’t guess project root
+;; In case we get a wrong workspace root, we can delete it with
+;; lsp-workspace-folders-remove
+(after! lsp-mode
+  (setq lsp-auto-guess-root nil))
 
 (load! "+bindings")
-(load! "+magit")
+;;(load! "+magit")
 (load! "+mail")
+(load! "+python")

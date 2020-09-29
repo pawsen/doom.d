@@ -14,6 +14,8 @@
 ;;      Alternatively, press 'gd' (or 'C-c g d') on a module to browse its
 ;;      directory (for easy access to its source code).
 
+;; doom reload, SPC h r r
+
 (setq doom-localleader-key ",")
 ;; (setq doom-localleader-alt-key ",")
 
@@ -35,7 +37,7 @@
        ;;doom-quit         ; DOOM quit-message prompts when you quit Emacs
        ;;fill-column       ; a `fill-column' indicator
        hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
-       ;; hydra
+       hydra
        ;;indent-guides     ; highlighted indent columns
        (modeline +light)          ; snazzy, Atom-inspired modeline, plus API
        nav-flash         ; blink the current line after jumping
@@ -57,13 +59,13 @@
        (evil +everywhere); come to the dark side, we have cookies
        file-templates    ; auto-snippets for empty files
        fold              ; (nigh) universal code folding
-       (format +onsave)  ; automated prettiness
+       (format) ; +onsave)  ; automated prettiness
        ;;god               ; run Emacs commands without modifier keys
        ;;lispy             ; vim for lisp, for people who don't like vim
        multiple-cursors  ; editing in many places at once
        ;;objed             ; text object editing for the innocent
        ;;parinfer          ; turn lisp into python, sort of
-       rotate-text       ; cycle region at point between text candidates
+       ;;rotate-text       ; cycle region at point between text candidates
        snippets          ; my elves. They type so I don't have to
        ;;word-wrap         ; soft wrapping with language-aware indent
 
@@ -71,7 +73,8 @@
        (dired +ranger    ; making dired pretty [functional]
               +icons)
        electric          ; smarter, keyword-based electric-indent
-       ibuffer           ; interactive buffer management
+       ; ibuffer           ; interactive buffer management
+       undo
        vc                ; version-control and Emacs, sitting in a tree
 
        :term
@@ -88,7 +91,7 @@
 
        :tools
        ansible
-       debugger          ; FIXME stepping through code, to help you add bugs
+       (debugger +lsp)     ; FIXME stepping through code, to help you add bugs
        ;;direnv
        ;;docker
        editorconfig      ; let someone else argue about tabs vs spaces
@@ -99,9 +102,8 @@
         +docsets        ; ...or in Dash docsets locally
         +dictionary)
        lsp
-       ;;macos             ; MacOS-specific commands
        magit             ; a git porcelain for Emacs
-       make              ; run make tasks from Emacs
+       ; make              ; run make tasks from Emacs
        pass              ; password manager for nerds
        ;;pdf               ; pdf enhancements
        ;;prodigy           ; FIXME managing external services & code builders
@@ -110,11 +112,14 @@
        ;;tmux              ; an API for interacting with tmux
        ;;upload            ; map local to remote projects via ssh/ftp
 
+       :os
+       (:if IS-MAC macos)  ; MacOS-specific commands
+
        :lang
        ;;agda              ; types of types of types of types...
        ;;assembly          ; assembly for fun or debugging
        (cc +lsp)           ; C/C++/Obj-C madness
-       ;;clojure           ; java with a lisp
+       ;;(clojure +lsp)           ; java with a lisp
        common-lisp       ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
        ;;crystal           ; ruby at the speed of c
@@ -155,7 +160,9 @@
        ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
        (python             ; beautiful is better than ugly
-        +lsp +conda +pyenv)
+        +lsp
+        +conda
+        +pyright) ;+pyenv)
        ;;qt                ; the 'cutest' gui framework ever
        ;;racket            ; a DSL for DSLs
        ;;rest              ; Emacs as a REST client

@@ -12,6 +12,9 @@
            :repo "hlissner/emacs-snippets"
            :files ("*")))
 
+(package! org-cv
+  :recipe (:host gitlab
+           :repo "Titan-C/org-cv"))
 
 ;; handy tools
 ;; (package! auth-source-pass)

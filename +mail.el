@@ -2,6 +2,7 @@
 
 ;; see additional config here
 ;; https://github.com/kandread/doom-emacs-private/blob/master/config.el#L43
+;; https://tecosaur.github.io/emacs-config/config.html#mail
 
 (map!
  (:leader

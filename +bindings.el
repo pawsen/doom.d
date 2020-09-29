@@ -8,10 +8,10 @@
 
 (map!
  ;; localleader
- :m ","    nil
+ ;; :m ","    nil
 
  ;; :n "M-."  #'+lookup/definition
- :n "C-c a" #'org-agenda
+ ;; :n "C-c a" #'org-agenda
 
  ;; outline
  :n "[ M-u" #'symbol-overlay-switch-backward
@@ -20,6 +20,8 @@
  ;; paste below/above as in evil-unimpaired
  :n  "]p"    #'+my/paste-above
  :n  "[p"    #'+my/paste-below
+
+ :nv "gy"    #'evilnc-copy-and-comment-lines
 
  ;; Text-scaling
  ;; "M-+"    (λ! (text-scale-set 0))
