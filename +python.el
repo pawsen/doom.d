@@ -4,8 +4,6 @@
 ;; https://discord.com/channels/406534637242810369/406554085794381833/652222791436861476
 
 (after! python
-  (add-hook! 'python-mode-hook #'auto-fill-mode)
-
   ;; Make SPC o r/SPC o R open an ipython repl
   (setq python-shell-interpreter "ipython")
 

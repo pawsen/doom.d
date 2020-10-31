@@ -52,7 +52,7 @@
        ;;unicode           ; extended unicode support for various languages
        vc-gutter         ; vcs diff in the fringe
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
-       window-select     ; visually switch windows
+       ;; window-select     ; visually switch windows
        workspaces        ; tab emulation, persistence & separate workspaces
 
        :editor
@@ -86,7 +86,7 @@
        :checkers
        ;; grammar           ; install LT here: /usr/share/java/languagetool/
                             ; install java: sudo apt install default-jre
-       (spell +everywhere)
+       (spell +flyspell +everywhere)
        (syntax +childframe)
 
        :tools
@@ -101,7 +101,8 @@
        (lookup           ; helps you navigate your code and documentation
         +docsets        ; ...or in Dash docsets locally
         +dictionary)
-       lsp
+       ;; (lsp +eglot)
+       (lsp)
        magit             ; a git porcelain for Emacs
        ; make              ; run make tasks from Emacs
        pass              ; password manager for nerds
@@ -136,8 +137,8 @@
        ;;(haskell +intero) ; a language that's lazier than I am
        ;;hy                ; readability of scheme w/ speed of python
        ;;idris             ;
-       ;;(java +meghanada) ; the poster child for carpal tunnel syndrome
-       ;;javascript        ; all(hope(abandon(ye(who(enter(here))))))
+       ;;(java +lsp) ; the poster child for carpal tunnel syndrome
+       ;;(javascript +lsp)        ; all(hope(abandon(ye(who(enter(here))))))
        ;;julia             ; a better, faster MATLAB
        ;;kotlin            ; a better, slicker Java(Script)
        ;;latex             ; writing papers in Emacs has never been so fun
@@ -193,5 +194,4 @@
        (default +bindings +smartparens)
 
        :private
-       my-cc
 )
