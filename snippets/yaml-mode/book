@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# name: add new book
+# uuid:
+# key: /book
+# condition: t
+# --
+
+- author: ${1:author}
+  title: ${2:title}
+  year: ${3:~}
+  isbn: ${4:~}
+  location: ${5:location}
+
+$0
