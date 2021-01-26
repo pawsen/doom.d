@@ -16,3 +16,7 @@ $ ~/.emacs.d/bin/doom install
 $ ~/.emacs.d/bin/doom upgrade
 $ ~/.emacs.d/bin/doom update
 ```
+
+## README for multiple-cursors
+How to use multiple-cursors - still not merged into develop
+https://github.com/hlissner/doom-emacs/pull/3607/commits/836af228664ce053fea6d7e183c439490af8176b
