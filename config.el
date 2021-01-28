@@ -53,6 +53,11 @@
 (after! lsp-clients
   (set-lsp-priority! 'clangd 1))  ; ccls has priority 0
 
+;; use rip to move deleted files to trash
+(setq delete-by-moving-to-trash t)
+(defun system-move-file-to-trash (filename)
+  (shell-command (concat (executable-find "rip") " " filename)))
+
 (load! "+bindings")
 ;;(load! "+magit")
 (load! "+mail")

@@ -115,6 +115,7 @@
 
        :os
        (:if IS-MAC macos)  ; MacOS-specific commands
+       tty                 ; configures Emacs for terminal usage.
 
        :lang
        ;;agda              ; types of types of types of types...
