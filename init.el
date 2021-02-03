@@ -78,7 +78,7 @@
        vc                ; version-control and Emacs, sitting in a tree
 
        :term
-       ;;eshell            ; a consistent, cross-platform shell (WIP)
+       eshell            ; a consistent, cross-platform shell (WIP)
        ;;shell             ; a terminal REPL for Emacs
        ;;term              ; terminals in Emacs
        ;;vterm             ; another terminals in Emacs
@@ -92,7 +92,7 @@
        :tools
        ansible
        (debugger +lsp)     ; FIXME stepping through code, to help you add bugs
-       ;;direnv
+       direnv              ; local env in .envrc file
        ;;docker
        editorconfig      ; let someone else argue about tabs vs spaces
        ;;ein               ; tame Jupyter notebooks with emacs
@@ -197,4 +197,5 @@
        (default +bindings +smartparens)
 
        :private
+       my-python
 )

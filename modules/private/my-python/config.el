@@ -1,11 +1,49 @@
-;;; +python.el -*- lexical-binding: t; -*-
+;;; private/my-python/config.el -*- lexical-binding: t; -*-
 
-;; Make the python REPL open in a vertical split buffer,
-;; https://discord.com/channels/406534637242810369/406554085794381833/652222791436861476
+
+;; library to send line or region to REPL using C-ret
+;; https://github.com/kaz-yos/eval-in-repl
+
+
+(map!
+ (:after python
+  :localleader
+  :map python-mode-map
+  :desc "Insert breakpoint" "b" #'+python/toggle-breakpoint
+  ;; :desc "Insert default breakpoint" "B" #'+python/toggle-default-breakpoint
+  ;; d is used by doom for displaying hydra for DAP
+  ;;:desc "Toggle debugpy lines" "d" #'+python/toggle-debugpy-lines
+  ))
+
+
+;; https://github.com/ztlevi/LSP-Debug
+;; https://github.com/ztlevi/doom-config/blob/master/%2Bprog.el
+;; https://code.visualstudio.com/docs/python/debugging#_set-configuration-options
+;; https://www.reddit.com/r/emacs/comments/hemguq/dapmode_how_to_configure_a_relative_path_for
+(after! dap-python
+  ;;(setq lsp-enable-dap-auto-configure nil)
+  ;; (setq dap-python-terminal "xterm -e ")
+  ;; ptsvd is deprecated.
+  (setq dap-python-debugger 'debugpy)
+
+  (dap-register-debug-template
+   "python :: unittest"
+   (list :type "python"
+         :args ""
+         :cwd nil
+         :env '(("DEBUG" . "1"))
+         :module 'unittest'
+         :request "launch"
+         :name "python :: unittest"))
+  )
+
 
 (after! python
+  ;; path to virtual envs.
+  (setenv "WORKON_HOME" "~/.pyenv/versions")
+
   ;; Make SPC o r/SPC o R open an ipython repl
-  (setq python-shell-interpreter "ipython")
+  ;; (setq python-shell-interpreter "ipython")
 
   (spacemacs//python-setup-shell)
 
@@ -13,18 +51,15 @@
   ;; +python/open-ipython-repl buffer does not support multiline scripts
   ;;https://github.com/hlissner/doom-emacs/issues/3912
   (setq python-shell-prompt-block-regexp "\\.\\.\\.:? ")
-
-
-  (map! :leader
-        (:prefix "o"
-         :desc "Ipython REPL" "i" #'spacemacs/python-start-or-switch-repl))
-  ;;#'+python/open-ipython-repl))
-
   )
+
 
 ;; fix BUG, python REPL buffer getting killed whenever opening new buffer /
 ;; changing window layout in another perspective
 ;; https://github.com/hlissner/doom-emacs/issues/3742
+
+;; instead of using +python/open-ipython-repl, I use
+;; spacemacs/python-start-or-switch-repl.
 (defun spacemacs/python-start-or-switch-repl ()
   "Start and/or switch to the REPL."
   (interactive)
@@ -44,7 +79,6 @@
       (error "Failed to start python shell properly"))
     (pop-to-buffer (process-buffer shell-process))
     (evil-insert-state)))
-
 
 (defun spacemacs//python-setup-shell (&rest args)
   (if (spacemacs/pyenv-executable-find "ipython")

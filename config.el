@@ -9,6 +9,9 @@
 
 (setq ispell-dictionary "english")
 
+;; run M-x projectile-discover-projects-in-search after changing this
+(setq projectile-project-search-path '("~/git"))
+
 ;; don't undo too much at once
 (setq evil-want-fine-undo t)
 
@@ -36,32 +39,38 @@
 (use-package  ox-moderncv
   :init (require 'ox-moderncv))
 
-(map!
- (:leader
-   (:prefix "a"
-    :desc "Ranger" "r" #'ranger
-    :desc "Deer" "d" #'deer)))
 
 (add-hook! 'prog-mode-hook #'auto-fill-mode)
 
-;; Don’t guess project root
-;; In case we get a wrong workspace root, we can delete it with
-;; lsp-workspace-folders-remove
+;; (after! lsp-ui
+;;   (setq ;;lsp-ui-sideline-enable nil
+;;         lsp-ui-doc-include-signature t
+;;         lsp-ui-doc-max-height 15
+;;         lsp-ui-doc-max-width 100
+;;         lsp-ui-doc-position 'at-point))
+
+
+;; Watch this thread on how to disable dap-ui-controls
+;; https://github.com/ztlevi/doom-config/blob/master/%2Bprog.el#L169
+(add-hook! 'lsp-mode-hook (lsp-headerline-breadcrumb-mode 1))
 (after! lsp-mode
-  (setq lsp-auto-guess-root nil))
+  (setq lsp-headerline-breadcrumb-segments '(file symbols))
+  ;; Don’t guess project root
+  ;; In case we get a wrong workspace root, we can delete it with
+  ;; lsp-workspace-folders-remove
+  ;;(setq lsp-auto-guess-root nil)
+  )
 
 (after! lsp-clients
   (set-lsp-priority! 'clangd 1))  ; ccls has priority 0
 
-;; path to virtual envs.
-(setenv "WORKON_HOME" "~/.pyenv/versions")
 
-;; use rip to move deleted files to trash
-;; (setq delete-by-moving-to-trash t)
-;; (defun system-move-file-to-trash (filename)
-;;   (shell-command (concat (executable-find "rip") " " filename)))
+(defun +my/dap-start ()
+  (interactive)
+  (dap-mode 1)
+  (call-interactively #'dap-debug))
+
 
 (load! "+bindings")
 ;;(load! "+magit")
 (load! "+mail")
-;(load! "+python")

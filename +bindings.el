@@ -59,14 +59,6 @@
    "c"       #'+workspace/close-window-or-workspace
    "C-C"     #'ace-delete-window)
 
- (:after lsp-ui-peek
-   :map lsp-ui-peek-mode-map
-   "h" #'lsp-ui-peek--select-prev-file
-   "j" #'lsp-ui-peek--select-next
-   "k" #'lsp-ui-peek--select-prev
-   "l" #'lsp-ui-peek--select-next-file
-   )
-
  (:map prog-mode-map
    :n "H"  #'lsp-ui-peek-jump-backward
    :n "L"  #'lsp-ui-peek-jump-forward
@@ -78,15 +70,19 @@
    )
 
  :leader
- (:prefix "j"
-   :desc "Dumb jump to def"        "g" #'dumb-jump-go
-   :desc "Dumb jump back"          "b" #'dumb-jump-back)
+
+ (:prefix "a"
+  :desc "Ranger" "r" #'ranger
+  :desc "Deer" "d" #'deer)
+
  (:prefix ("y" . "yank")
    :desc "Yank pop!"               "p" #'counsel-yank-pop
    :desc "Git yank link"           "g" #'git-link)
+
  (:prefix ("e" . "error")
                                    "n" #'flycheck-next-error
                                    "p" #'flycheck-previous-error)
+
  (:prefix ("l" . "lsp")
    :desc "format buffer"           "=" #'lsp-format-buffer
    :desc "action"                  "a" #'lsp-execute-code-action
@@ -107,10 +103,29 @@
  (:prefix "o"
    :desc "symbol overlay"         "o" #'symbol-overlay-put
    :desc "symbol remove"          "q" #'symbol-overlay-remove-all)
+ (:prefix ("d" . "debug")
+   :desc "Start debugger"         "d" #'+my/dap-start
+   :desc "Start last debugger"    "D" #'dap-debug-last
+   "t" #'dap-breakpoint-toggle
+   "b" #'dap-ui-breakpoints
+   "h" #'dap-hydra
+   "r" #'dap-ui-repl
+   "r" #'dap-debug-restart
+   "l" #'dap-ui-locals
+   "e" #'dap-ui-expressions
+   "a" #'dap-ui-expressions-add
+   "R" #'dap-ui-expressions-remove
+   "f" #'dap-switch-stack-frame
+   "q" #'dap-disconnect
+   "s" #'dap-ui-sessions
+   "k" #'dap-delete-session
+   "K" #'dap-delete-all-sessions
+   "S" #'realgud-short-key-mode)
 
  )
 
 (global-set-key (kbd "C-<f10>") 'flyspell-check-previous-highlighted-word)
+
 
 ;;; Usefull examples
 ;;; bind leader key
