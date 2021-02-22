@@ -39,6 +39,9 @@
 (use-package  ox-moderncv
   :init (require 'ox-moderncv))
 
+(after! browse-at-remote
+  (dolist (elt '(("git.magenta.dk" . "gitlab")))
+    (add-to-list 'browse-at-remote-remote-type-domains elt)))
 
 (add-hook! 'prog-mode-hook #'auto-fill-mode)
 
