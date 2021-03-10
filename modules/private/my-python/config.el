@@ -35,6 +35,19 @@
          :module 'unittest'
          :request "launch"
          :name "python :: unittest"))
+
+  (dap-register-debug-template "Python: Django"
+   (list :type "python"
+         :args "runserver --noreload"
+         ;; :cws  ((lsp-workspace-root (buffer-file-name)))
+         :cwd "/home/paw/git/magenta/os2ds/src/django_test"
+         :module nil
+         :console "integratedTerminal"
+         :program "manage.py"
+         :django t
+         :request "launch"
+         :name "Python: Django"))
+
   )
 
 
