@@ -102,7 +102,7 @@
         +docsets        ; ...or in Dash docsets locally
         +dictionary)
        ;; (lsp +eglot)
-       (lsp)
+       (lsp +peek)
        magit             ; a git porcelain for Emacs
        ; make              ; run make tasks from Emacs
        (pass +auth)        ; password manager for nerds

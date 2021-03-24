@@ -10,9 +10,6 @@
  ;; localleader
  ;; :m ","    nil
 
- ;; :n "M-."  #'+lookup/definition
- ;; :n "C-c a" #'org-agenda
-
  ;; outline
  :n "[ M-u" #'symbol-overlay-switch-backward
  :n "] M-i" #'symbol-overlay-switch-forward
@@ -22,20 +19,6 @@
  :n  "[p"    #'+my/paste-below
 
  :nv "gy"    #'evilnc-copy-and-comment-lines
-
- ;; Text-scaling
- ;; "M-+"    (λ! (text-scale-set 0))
- ;; "M-="    #'text-scale-increase
- ;; "M--"    #'text-scale-decrease
-
- ;; Window Movements
- ;; "C-h"    #'evil-window-left
- ;; "C-j"    #'evil-window-down
- ;; "C-k"    #'evil-window-up
- ;; "C-l"    #'evil-window-right
- ;; "A-q"    #'delete-window
- ;; "C-`"      #'+popup/toggle
- ;; "<C-tab>"  #'+popup/other
 
  (:map evil-window-map                  ; prefix "C-w"
    ;; Navigation
@@ -60,24 +43,14 @@
    "C-C"     #'ace-delete-window)
 
  (:map prog-mode-map
-   :n "H"  #'lsp-ui-peek-jump-backward
-   :n "L"  #'lsp-ui-peek-jump-forward
-   :m "C-H"  #'+my/xref-jump-backward-file
-   :m "C-L"  #'+my/xref-jump-forward-file
-
    :localleader
    :desc "quickrun compile"        "q" #'quickrun-compile-only
    )
 
  :leader
-
  (:prefix "a"
   :desc "Ranger" "r" #'ranger
   :desc "Deer" "d" #'deer)
-
- (:prefix ("y" . "yank")
-   :desc "Yank pop!"               "p" #'counsel-yank-pop
-   :desc "Git yank link"           "g" #'git-link)
 
  (:prefix ("e" . "error")
                                    "n" #'flycheck-next-error
