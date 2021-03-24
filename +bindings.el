@@ -126,6 +126,32 @@
 
 (global-set-key (kbd "C-<f10>") 'flyspell-check-previous-highlighted-word)
 
+;; +lookup/other-window
+;; https://github.com/hlissner/doom-emacs/issues/3397
+(dolist (fn '(definition references))
+  (fset (intern (format "+lookup/%s-other-window" fn))
+        (lambda (identifier &optional arg)
+          "TODO"
+          (interactive (list (doom-thing-at-point-or-region)
+                             current-prefix-arg))
+          (let ((pt (point)))
+            (switch-to-buffer-other-window (current-buffer))
+            (goto-char pt)
+            (funcall (intern (format "+lookup/%s" fn)) identifier arg)))))
+
+(dolist (fn '(definition references))
+  (fset (intern (format "+lookup/%s-other-frame" fn))
+        (lambda (identifier &optional arg)
+          "TODO"
+          (interactive (list (doom-thing-at-point-or-region)
+                             current-prefix-arg))
+          (let ((pt (point)))
+            (switch-to-buffer-other-frame (current-buffer))
+            (goto-char pt)
+            (funcall (intern (format "+lookup/%s" fn)) identifier arg)))))
+
+(define-key evil-normal-state-map "gof" '+lookup/definition-other-frame)
+(define-key evil-normal-state-map "gow" '+lookup/definition-other-window)
 
 ;;; Usefull examples
 ;;; bind leader key
