@@ -20,6 +20,10 @@
 ;; https://github.com/ztlevi/doom-config/blob/master/%2Bprog.el
 ;; https://code.visualstudio.com/docs/python/debugging#_set-configuration-options
 ;; https://www.reddit.com/r/emacs/comments/hemguq/dapmode_how_to_configure_a_relative_path_for
+;;
+;;More on making a dap-debug-provider, which could be used for making debug
+;; template for eg run_stage engine.
+;; https://gitter.im/emacs-lsp/lsp-mode?at=5eb8968fd41f5d6732fcd557
 (after! dap-python
   ;;(setq lsp-enable-dap-auto-configure nil)
   ;; (setq dap-python-terminal "xterm -e ")
@@ -38,18 +42,40 @@
 
   (dap-register-debug-template "Python: Django"
    (list :type "python"
-         :args "runserver --noreload"
+         ;; XXX: without --noreload, breakpoints will not be hit
+         :args "runserver -v 3 --noreload 0.0.0.0:8000"
+         ;; :env '(("OS2DS_REPORT_USER_CONFIG_PATH" .
+         ;;         "/home/paw/git/os2datascanner/dev-environment/report/dev-settings.toml")
+         ;;        ("DJANGO_SETTINGS_MODULE" . "os2datascanner.projects.report.settings"))
+
+         :env '(("OS2DS_REPORT_USER_CONFIG_PATH" .
+                 "/home/paw/git/os2datascanner/dev-environment/report/dev-settings.toml"))
+
          ;; :cws  ((lsp-workspace-root (buffer-file-name)))
-         :cwd "/home/paw/git/magenta/os2ds/src/django_test"
+         ;; :cwd "${workspaceFolder}"
+         ;; :cwd (expand-file-name "~/git/magenta/os2ds/src/django_test")
+         :cwd (expand-file-name "~/git/os2datascanner/src/os2datascanner/projects/report")
          :module nil
-         :console "integratedTerminal"
+         ;; :console "integratedTerminal"
          :program "manage.py"
          :django t
          :request "launch"
          :name "Python: Django"))
 
-  )
+  (dap-register-debug-template "Python: engine"
+   (list :type "python"
+         :args "--debug"
+         :env '(("OS2DS_ENGINE_USER_CONFIG_PATH" .
+                 "/home/paw/git/os2datascanner/dev-environment/engine/dev-settings.toml"))
+         :cwd nil
+         ;; :cwd (expand-file-name ".")
+         ;; :cwd "/home/paw/git/os2datascanner/src/os2datascanner/"
+         :module "os2datascanner.engine2.pipeline.run_stage"
+         :program "explorer"
+         :request "launch"
+         :name "Python: engine"))
 
+  )
 
 (after! python
   ;; path to virtual envs.
@@ -58,7 +84,7 @@
   ;; Make SPC o r/SPC o R open an ipython repl
   ;; (setq python-shell-interpreter "ipython")
 
-  (spacemacs//python-setup-shell)
+  ;; (spacemacs//python-setup-shell)
 
   ;; fix BUG
   ;; +python/open-ipython-repl buffer does not support multiline scripts
