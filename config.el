@@ -19,7 +19,8 @@
 ;;
 ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 ;; font string. You generally only need these two:
-(setq doom-font (font-spec :family "monospace" :size 16))
+
+;; (setq doom-font (font-spec :family "monospace" :size 16))
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
@@ -52,8 +53,6 @@
 
 
 
-
-
 ;;; Modules
 ;;; :lang org
 (setq org-directory "~/projects/org/"
@@ -65,6 +64,21 @@
       org-startup-folded 'overview
       org-ellipsis " [...] ")
 
+;;; :lang web
+;; Add django as engine for html files
+;; TODO per directory settings
+;; Note there is a bug i web+mode, so the add+hook solution is needed
+;; https://emacs.stackexchange.com/questions/32585/set-web-mode-engine-per-directory/59709#59709
+;; TODO change indention spaces
+;; https://emacs.stackexchange.com/a/58343
+(after! web-mode
+  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.jinja?\\'" . web-mode))
+  (setq web-mode-engines-alist
+        '(("django"  . "\\.jinja\\'")
+          ("django"  . "\\.djhtml\\'")
+          ("django"  . "\\.html\\'")))
+)
 
 ;;; :tools magit
 (setq magit-repository-directories '(("~/git" . 2))
