@@ -49,6 +49,7 @@
        ;;pretty-code       ; replace bits of code with pretty symbols
        ;;tabs              ; an tab bar for Emacs
        treemacs          ; a project drawer, like neotree but cooler
+       tree-sitter       ; syntax highligtning
        ;;unicode           ; extended unicode support for various languages
        vc-gutter         ; vcs diff in the fringe
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
@@ -67,7 +68,7 @@
        ;;parinfer          ; turn lisp into python, sort of
        ;;rotate-text       ; cycle region at point between text candidates
        snippets          ; my elves. They type so I don't have to
-       ;;word-wrap         ; soft wrapping with language-aware indent
+       word-wrap         ; soft wrapping with language-aware indent
 
        :emacs
        (dired +ranger    ; making dired pretty [functional]
@@ -90,7 +91,7 @@
        (syntax +childframe)
 
        :tools
-       ansible
+       ;; ansible
        (debugger +lsp)     ; FIXME stepping through code, to help you add bugs
        direnv              ; local env in .envrc file
        ;;docker
@@ -115,7 +116,7 @@
 
        :os
        (:if IS-MAC macos)  ; MacOS-specific commands
-       tty                 ; configures Emacs for terminal usage.
+       ;; tty                 ; configures Emacs for terminal usage.
 
        :lang
        ;;agda              ; types of types of types of types...
@@ -152,8 +153,10 @@
        ;;ocaml             ; an objective camel
        (org              ; organize your plain life in plain text
         +dragndrop       ; drag & drop files/images into org buffers
+        +journal
+        ;;+roam
         ;;+hugo            ; use Emacs for hugo blogging
-        +jupyter        ; ipython/jupyter support for babel
+        ; +jupyter        ; ipython/jupyter support for babel
         +pandoc          ; export-with-pandoc support
         ;;+pomodoro        ; be fruitful with the tomato technique
         +present)        ; using org-mode for presentations
@@ -179,18 +182,19 @@
        ;;solidity          ; do you need a blockchain? No.
        ;;swift             ; who asked for emoji variables?
        ;;terra             ; Earth and Moon in alignment for performance.
-       ;;web               ; the tubes
+       web               ; the tubes
 
        :email
-       (mu4e +gmail)
+       ;; (mu4e +gmail)
        ;;notmuch
        ;;(wanderlust +gmail)
 
        :app
        ;;calendar
        ;;irc               ; how neckbeards socialize
-       ;;(rss +org)        ; emacs as an RSS reader
+       (rss +org)        ; emacs as an RSS reader
        ;;twitter           ; twitter client https://twitter.com/vnought
+       everywhere          ; Spawn an emacsclient window for quick edits.
 
        :config
        ;;literate

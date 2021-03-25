@@ -37,31 +37,84 @@
 ;;
 ;; You can also try 'gd' (or 'C-c g d') to jump to their definition and see how
 ;; they are implemented.
-;;
+
+(setq ispell-dictionary "english"
+ ;; IMO, modern editors have trained a bad habit into us all: a burning
+      ;; need for completion all the time -- as we type, as we breathe, as we
+      ;; pray to the ancient ones -- but how often do you *really* need that
+      ;; information? I say rarely. So opt for manual completion:
+      company-idle-delay nil
+
+ )
 
 (when IS-MAC
   (setq ns-use-thin-smoothing t))
 
-(setq ispell-dictionary "english")
 
+
+
+
+;;; Modules
+;;; :lang org
+(setq org-directory "~/projects/org/"
+      org-archive-location (concat org-directory ".archive/%s::")
+      org-roam-directory (concat org-directory "notes/")
+      org-roam-db-location (concat org-roam-directory ".org-roam.db")
+      org-journal-encrypt-journal t
+      org-journal-file-format "%Y%m%d.org"
+      org-startup-folded 'overview
+      org-ellipsis " [...] ")
+
+
+;;; :tools magit
+(setq magit-repository-directories '(("~/git" . 2))
+      magit-save-repository-buffers nil
+      ;; Don't restore the wconf after quitting magit, it's jarring
+      magit-inhibit-save-previous-winconf t
+      ;; transient-values '((magit-commit "--gpg-sign=5F6C0EA160557395")
+      ;;                    (magit-rebase "--autosquash" "--gpg-sign=5F6C0EA160557395")
+      ;;                    (magit-pull "--rebase" "--gpg-sign=5F6C0EA160557395"))
+
+      )
+
+(after! browse-at-remote
+  (dolist (elt '(("git.magenta.dk" . "gitlab")))
+    (add-to-list 'browse-at-remote-remote-type-domains elt)))
+
+
+;;; :app everywhere
+;; Easier to match with a bspwm rule:
+;;   bspc rule -a 'Emacs:emacs-everywhere' state=floating sticky=on
+(setq emacs-everywhere-frame-name-format "emacs-anywhere")
+
+;; The modeline is not useful to me in the popup window. It looks much nicer
+;; to hide it.
+(add-hook 'emacs-everywhere-init-hooks #'hide-mode-line-mode)
+
+;; Semi-center it over the target window, rather than at the cursor position
+;; (which could be anywhere).
+(defadvice! my-emacs-everywhere-set-frame-position (&rest _)
+  :override #'emacs-everywhere-set-frame-position
+  (cl-destructuring-bind (width . height)
+      (alist-get 'outer-size (frame-geometry))
+    (set-frame-position (selected-frame)
+                        (+ emacs-everywhere-window-x
+                           (/ emacs-everywhere-window-width 2)
+                           (- (/ width 2)))
+                        (+ emacs-everywhere-window-y
+                           (/ emacs-everywhere-window-height 2)))))
+
+
+;;; custom
 ;; run M-x projectile-discover-projects-in-search after changing this
 (setq projectile-project-search-path '("~/git"))
-(setq org-directory "~/org/")       ;; MUST BE SET BEFORE ORG LOADS
-;;
+
 ;; don't undo too much at once
 (setq evil-want-fine-undo t)
 
 ;; exclude from recent file list
 (after! recentf
   (add-to-list 'recentf-exclude "/var"))
-
-(use-package! symbol-overlay
-  :commands (symbol-overlay-put))
-
-(use-package! company-quickhelp
-  :config
-  (map! :map company-active-map
-        "C-c h" #'company-quickhelp-manual-begin))
 
 ;; copy files in dired asynchronius with rsync
 ;; dired-rsync is already included in dired module
@@ -75,22 +128,17 @@
 (use-package  ox-moderncv
   :init (require 'ox-moderncv))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Magit customization
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(after! browse-at-remote
-  (dolist (elt '(("git.magenta.dk" . "gitlab")))
-    (add-to-list 'browse-at-remote-remote-type-domains elt)))
-
 
 (add-hook! 'prog-mode-hook #'auto-fill-mode)
 
-;; (after! lsp-ui
-;;   (setq ;;lsp-ui-sideline-enable nil
+(after! lsp-ui
+  (setq lsp-ui-sideline-enable nil
+        lsp-enable-symbol-highlighting nil
 ;;         lsp-ui-doc-include-signature t
 ;;         lsp-ui-doc-max-height 15
 ;;         lsp-ui-doc-max-width 100
 ;;         lsp-ui-doc-position 'at-point))
+   ))
 
 
 ;; Watch this thread on how to disable dap-ui-controls
@@ -110,4 +158,4 @@
 
 (load! "+bindings")
 ;;(load! "+magit")
-(load! "+mail")
+;;(load! "+mail")
