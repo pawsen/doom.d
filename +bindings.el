@@ -22,7 +22,8 @@
 
  (:map evil-window-map                  ; prefix "C-w"
    ;; Navigation
-   "C-w"     #'ace-window)  ; #'other-window in evil/config.el
+  ;; "C-w"     #'ace-window
+  )  ; #'other-window in evil/config.el
 
  (:map prog-mode-map
    :localleader

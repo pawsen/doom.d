@@ -13,7 +13,27 @@
   ;; :desc "Insert default breakpoint" "B" #'+python/toggle-default-breakpoint
   ;; d is used by doom for displaying hydra for DAP
   ;;:desc "Toggle debugpy lines" "d" #'+python/toggle-debugpy-lines
-  ))
+  )
+
+ (:after dap-mode
+  :map python-mode-map
+  :localleader
+  ;; "d" nil
+  (:desc "debug" :prefix "d"
+   :desc "Hydra" :n "h" #'dap-hydra
+   :desc "Run debug configuration" :n "d" #'dap-debug
+   :desc "dap-ui REPL" :n "r" #'dap-ui-repl
+   ;; :desc "Debug test function" :n "t" #'dap-python-debug-test-at-point  # TODO
+   :desc "Run last debug configuration" :n "l" #'dap-debug-last
+   :desc "Toggle breakpoint" :n "b" #'dap-breakpoint-toggle
+   :desc "dap continue" :n "c" #'dap-continue
+   :desc "dap next" :n "n" #'dap-next
+   :desc "Debug script" :n "s" #'dap-python-script
+   :desc "dap step in" :n "i" #'dap-step-in
+   :desc "dap eval at point" :n "e" #'dap-eval-thing-at-point
+   :desc "dap switch frame" :n "f" #'dap-switch-stack-frame
+   :desc "Disconnect" :n "q" #'dap-disconnect ))
+ )
 
 
 ;; https://github.com/ztlevi/LSP-Debug
@@ -77,19 +97,23 @@
 
   )
 
-(after! python
-  ;; path to virtual envs.
-  (setenv "WORKON_HOME" "~/.pyenv/versions")
 
-  ;; Make SPC o r/SPC o R open an ipython repl
-  ;; (setq python-shell-interpreter "ipython")
+(set-popup-rule! "^\\*Python*"  :side 'bottom :size .30)
+
+;; path to virtual envs.
+(setenv "WORKON_HOME" "~/.pyenv/versions")
+
+(after! python
+  (defadvice! +ipython-use-virtualenv (orig-fn &rest args)
+    "Use the Python binary from the current virtual environment."
+    :around #'+python/open-repl
+    (if (getenv "VIRTUAL_ENV")
+        (let ((python-shell-interpreter (executable-find "ipython")))
+          (apply orig-fn args))
+      (apply orig-fn args)))
 
   ;; (spacemacs//python-setup-shell)
 
-  ;; fix BUG
-  ;; +python/open-ipython-repl buffer does not support multiline scripts
-  ;;https://github.com/hlissner/doom-emacs/issues/3912
-  (setq python-shell-prompt-block-regexp "\\.\\.\\.:? ")
   )
 
 

@@ -85,10 +85,6 @@
       magit-save-repository-buffers nil
       ;; Don't restore the wconf after quitting magit, it's jarring
       magit-inhibit-save-previous-winconf t
-      ;; transient-values '((magit-commit "--gpg-sign=5F6C0EA160557395")
-      ;;                    (magit-rebase "--autosquash" "--gpg-sign=5F6C0EA160557395")
-      ;;                    (magit-pull "--rebase" "--gpg-sign=5F6C0EA160557395"))
-
       )
 
 (after! browse-at-remote
@@ -121,10 +117,9 @@
 
 ;;; custom
 ;; run M-x projectile-discover-projects-in-search after changing this
-(setq projectile-project-search-path '("~/git"))
-
-;; don't undo too much at once
-(setq evil-want-fine-undo t)
+(setq projectile-project-search-path '("~/git")
+      ;; don't undo too much at once
+      evil-want-fine-undo t)
 
 ;; exclude from recent file list
 (after! recentf
@@ -147,7 +142,6 @@
 
 (after! lsp-ui
   (setq lsp-ui-sideline-enable nil
-        lsp-enable-symbol-highlighting nil
 ;;         lsp-ui-doc-include-signature t
 ;;         lsp-ui-doc-max-height 15
 ;;         lsp-ui-doc-max-width 100
@@ -157,17 +151,65 @@
 
 ;; Watch this thread on how to disable dap-ui-controls
 ;; https://github.com/ztlevi/doom-config/blob/master/%2Bprog.el#L169
-(add-hook! 'lsp-mode-hook (lsp-headerline-breadcrumb-mode 1))
 (after! lsp-mode
-  (setq lsp-headerline-breadcrumb-segments '(file symbols))
-  ;; Don’t guess project root
-  ;; In case we get a wrong workspace root, we can delete it with
-  ;; lsp-workspace-folders-remove
-  ;;(setq lsp-auto-guess-root nil)
-  )
+  (setq lsp-headerline-breadcrumb-segments '(file symbols)
+        lsp-enable-symbol-highlighting nil
+        lsp-enable-file-watchers nil
+        ;; Don’t guess project root
+        ;; In case we get a wrong workspace root, we can delete it with
+        ;; lsp-workspace-folders-remove
+        lsp-auto-guess-root nil
+        lsp-headerline-breadcrumb-segments '(file symbols)
+
+  ))
 
 (after! lsp-clients
   (set-lsp-priority! 'clangd 1))  ; ccls has priority 0
+
+(after! dap-mode
+
+
+  ;; (setq dap-auto-show-output t)
+  (setq dap-output-window-max-height 50)
+  (setq dap-output-window-min-height 50)
+  (setq dap-auto-configure-features '(locals))
+
+  (setq dap-ui-buffer-configurations
+        `((,"*dap-ui-locals*"  . ((side . right) (slot . 1) (window-width . 0.50)))
+          (,"*dap-ui-repl*" . ((side . right) (slot . 1) (window-width . 0.50)))
+          (,"*dap-ui-expressions*" . ((side . right) (slot . 2) (window-width . 0.20)))
+          (,"*dap-ui-sessions*" . ((side . right) (slot . 3) (window-width . 0.20)))
+          (,"*dap-ui-breakpoints*" . ((side . left) (slot . 2) (window-width . , 0.20)))
+          (,"*debug-window*" . ((side . bottom) (slot . 3) (window-width . 0.20)))))
+
+  (defun my/window-visible (b-name)
+    "Return whether B-NAME is visible."
+    (-> (-compose 'buffer-name 'window-buffer)
+        (-map (window-list))
+        (-contains? b-name)))
+
+  (defun my/show-debug-windows (session)
+    "Show debug windows."
+    (let ((lsp--cur-workspace (dap--debug-session-workspace session)))
+      (save-excursion
+        (unless (my/window-visible dap-ui--repl-buffer)
+          (dap-ui-repl)))))
+
+  (add-hook 'dap-stopped-hook 'my/show-debug-windows)
+
+  (defun my/hide-debug-windows (session)
+    "Hide debug windows when all debug sessions are dead."
+    (unless (-filter 'dap--session-running (dap--get-sessions))
+      (and (get-buffer dap-ui--repl-buffer)
+           (kill-buffer dap-ui--repl-buffer)
+           (get-buffer dap-ui--debug-window-buffer)
+           (kill-buffer dap-ui--debug-window-buffer))))
+
+  (add-hook 'dap-terminated-hook 'my/hide-debug-windows)
+  )
+
+(remove-hook 'dap-mode-hook #'dap-tooltip-mode)
+(remove-hook 'dap-ui-mode-hook #'dap-ui-controls-mode)
 
 
 (load! "+bindings")
