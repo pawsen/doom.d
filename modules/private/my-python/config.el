@@ -7,19 +7,20 @@
 
 (map!
  (:after python
-  :localleader
   :map python-mode-map
-  :desc "Insert breakpoint" "b" #'+python/toggle-breakpoint
-  ;; :desc "Insert default breakpoint" "B" #'+python/toggle-default-breakpoint
-  ;; d is used by doom for displaying hydra for DAP
-  ;;:desc "Toggle debugpy lines" "d" #'+python/toggle-debugpy-lines
+  (:localleader
+   :desc "Insert breakpoint" "b" #'+python/toggle-breakpoint
+   ;; :desc "Insert default breakpoint" "B" #'+python/toggle-default-breakpoint
+   ;; d is used by doom for displaying hydra for DAP
+   ;;:desc "Toggle debugpy lines" "d" #'+python/toggle-debugpy-lines
+   )
   )
 
  (:after dap-mode
   :map python-mode-map
   :localleader
   ;; "d" nil
-  (:desc "debug" :prefix "d"
+  (:prefix ("d" . "dap debug")
    :desc "Hydra" :n "h" #'dap-hydra
    :desc "Run debug configuration" :n "d" #'dap-debug
    :desc "dap-ui REPL" :n "r" #'dap-ui-repl
@@ -98,6 +99,7 @@
   )
 
 
+;; open python repl at the bottom
 (set-popup-rule! "^\\*Python*"  :side 'bottom :size .30)
 
 ;; path to virtual envs.
@@ -112,18 +114,27 @@
           (apply orig-fn args))
       (apply orig-fn args)))
 
-  ;; (spacemacs//python-setup-shell)
+  (setq python-shell-completion-native-enable nil)
 
+  ;; fix BUG
+  ;; +python/open-ipython-repl buffer does not support multiline scripts
+  ;;https://github.com/hlissner/doom-emacs/issues/3912
+  (setq python-shell-prompt-block-regexp "\\.\\.\\.:? ")
+
+
+  ;; fix BUG, python REPL buffer getting killed whenever opening new buffer /
+  ;; changing window layout in another perspective
+  ;; https://github.com/hlissner/doom-emacs/issues/3742
+
+  ;; instead of using +python/open-ipython-repl, I use
+  ;; +my/python-start-or-switch-repl which is from spacemacs. It must return the
+  ;; repl, in order to register it as the repl-handler.
+  (spacemacs//python-setup-shell)
+  (set-repl-handler! 'python-mode #'+my/python-start-or-switch-repl)
   )
 
 
-;; fix BUG, python REPL buffer getting killed whenever opening new buffer /
-;; changing window layout in another perspective
-;; https://github.com/hlissner/doom-emacs/issues/3742
-
-;; instead of using +python/open-ipython-repl, I use
-;; spacemacs/python-start-or-switch-repl.
-(defun spacemacs/python-start-or-switch-repl ()
+(defun +my/python-start-or-switch-repl ()
   "Start and/or switch to the REPL."
   (interactive)
   (let ((shell-process
@@ -140,8 +151,7 @@
                (python-shell-get-process)))))
     (unless shell-process
       (error "Failed to start python shell properly"))
-    (pop-to-buffer (process-buffer shell-process))
-    (evil-insert-state)))
+    (pop-to-buffer (process-buffer shell-process))))
 
 (defun spacemacs//python-setup-shell (&rest args)
   (if (spacemacs/pyenv-executable-find "ipython")
@@ -174,3 +184,6 @@ as the pyenv version then also return nil. This works around https://github.com/
                 (setq i (1+ i))))
           executable))
     (executable-find command)))
+
+
+

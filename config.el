@@ -213,5 +213,6 @@
 
 
 (load! "+bindings")
+(load! "+comint")
 ;;(load! "+magit")
 ;;(load! "+mail")
