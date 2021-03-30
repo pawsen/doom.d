@@ -1,6 +1,12 @@
 #+TITLE: TODO
+* LSP
+https://emacs-lsp.github.io/lsp-mode/tutorials/CPP-guide/
 
 * configs
+Awesome configs to look at
+https://tecosaur.github.io/emacs-config/config.html
+https://github.com/fuxialexander/doom-emacs-private-xfu/
+
 https://github.com/yiufung/dot-emacs/blob/master/init.el
 * python
 Python lsp setup

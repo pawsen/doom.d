@@ -45,7 +45,9 @@
       ;; pray to the ancient ones -- but how often do you *really* need that
       ;; information? I say rarely. So opt for manual completion:
       company-idle-delay nil
-
+      ;; Relative line numbers are fantastic for knowing how far away line
+      ;; numbers are, then ESC 12 <UP> gets you exactly where you think.
+      display-line-numbers-type 'relative
  )
 
 (when IS-MAC
@@ -152,15 +154,14 @@
 ;; Watch this thread on how to disable dap-ui-controls
 ;; https://github.com/ztlevi/doom-config/blob/master/%2Bprog.el#L169
 (after! lsp-mode
-  (setq lsp-headerline-breadcrumb-segments '(file symbols)
+  (setq lsp-headerline-breadcrumb-enable t
         lsp-enable-symbol-highlighting nil
         lsp-enable-file-watchers nil
         ;; Don’t guess project root
         ;; In case we get a wrong workspace root, we can delete it with
         ;; lsp-workspace-folders-remove
         lsp-auto-guess-root nil
-        lsp-headerline-breadcrumb-segments '(file symbols)
-
+        +lsp-company-backends '(company-capf :with company-yasnippet)
   ))
 
 (after! lsp-clients
@@ -170,17 +171,21 @@
 
 
   ;; (setq dap-auto-show-output t)
+  ;; https://github.com/emacs-lsp/dap-mode/blob/master/dap-mode.el#L217
+  ;; dap-auto-configure-features '(sessions locals breakpoints expressions controls tooltip)
   (setq dap-output-window-max-height 50)
-  (setq dap-output-window-min-height 50)
+  (setq dap-output-window-min-height 10)
   (setq dap-auto-configure-features '(locals))
 
+  ;; https://github.com/emacs-lsp/dap-mode/blob/master/dap-ui.el#L167
+  ;; width/height is in percent of screen size
   (setq dap-ui-buffer-configurations
-        `((,"*dap-ui-locals*"  . ((side . right) (slot . 1) (window-width . 0.50)))
-          (,"*dap-ui-repl*" . ((side . right) (slot . 1) (window-width . 0.50)))
-          (,"*dap-ui-expressions*" . ((side . right) (slot . 2) (window-width . 0.20)))
-          (,"*dap-ui-sessions*" . ((side . right) (slot . 3) (window-width . 0.20)))
+        `((,"*dap-ui-locals*"  . ((side . right) (slot . 1) (window-width . 0.30)))
+          (,"*dap-ui-repl*" . ((side . right) (slot . 2) (window-width . 0.30)))
+          (,"*dap-ui-expressions*" . ((side . right) (slot . 1) (window-width . 0.20)))
+          (,"*dap-ui-sessions*" . ((side . right) (slot . 1) (window-width . 0.20)))
           (,"*dap-ui-breakpoints*" . ((side . left) (slot . 2) (window-width . , 0.20)))
-          (,"*debug-window*" . ((side . bottom) (slot . 3) (window-width . 0.20)))))
+          (,"*debug-window*" . ((side . bottom) (slot . 1) (window-height . 0.30)))))
 
   (defun my/window-visible (b-name)
     "Return whether B-NAME is visible."

@@ -3,38 +3,23 @@
 
 ;; library to send line or region to REPL using C-ret
 ;; https://github.com/kaz-yos/eval-in-repl
-
+(use-package! eval-in-repl-python
+  :after python
+  :config
+  (setq eir-repl-placement 'below)
+  )
 
 (map!
  (:after python
-  :map python-mode-map
+ :map python-mode-map
+    :nvi [C-return] #'eir-eval-in-python
+
   (:localleader
    :desc "Insert breakpoint" "b" #'+python/toggle-breakpoint
    ;; :desc "Insert default breakpoint" "B" #'+python/toggle-default-breakpoint
-   ;; d is used by doom for displaying hydra for DAP
    ;;:desc "Toggle debugpy lines" "d" #'+python/toggle-debugpy-lines
    )
-  )
-
- (:after dap-mode
-  :map python-mode-map
-  :localleader
-  ;; "d" nil
-  (:prefix ("d" . "dap debug")
-   :desc "Hydra" :n "h" #'dap-hydra
-   :desc "Run debug configuration" :n "d" #'dap-debug
-   :desc "dap-ui REPL" :n "r" #'dap-ui-repl
-   ;; :desc "Debug test function" :n "t" #'dap-python-debug-test-at-point  # TODO
-   :desc "Run last debug configuration" :n "l" #'dap-debug-last
-   :desc "Toggle breakpoint" :n "b" #'dap-breakpoint-toggle
-   :desc "dap continue" :n "c" #'dap-continue
-   :desc "dap next" :n "n" #'dap-next
-   :desc "Debug script" :n "s" #'dap-python-script
-   :desc "dap step in" :n "i" #'dap-step-in
-   :desc "dap eval at point" :n "e" #'dap-eval-thing-at-point
-   :desc "dap switch frame" :n "f" #'dap-switch-stack-frame
-   :desc "Disconnect" :n "q" #'dap-disconnect ))
- )
+  ))
 
 
 ;; https://github.com/ztlevi/LSP-Debug
@@ -109,11 +94,15 @@
   (defadvice! +ipython-use-virtualenv (orig-fn &rest args)
     "Use the Python binary from the current virtual environment."
     :around #'+python/open-repl
+    ;; :around #'+my/python-start-or-switch-repl
     (if (getenv "VIRTUAL_ENV")
         (let ((python-shell-interpreter (executable-find "ipython")))
           (apply orig-fn args))
       (apply orig-fn args)))
 
+
+  ;; try to get indent/completion working nicely
+  ;; readline support is wonky at the moment
   (setq python-shell-completion-native-enable nil)
 
   ;; fix BUG

@@ -6,6 +6,9 @@
 ;; disable x, remap later to x x
 ;; (general-define-key :states '(normal visual motion) "x" nil)
 
+
+;; doom-evil-state-alist defines (nvi) etc
+;; https://github.com/hlissner/doom-emacs/blob/develop/core/core-keybinds.el#L236
 (map!
  ;; localleader
  ;; :m ","    nil
@@ -21,46 +24,80 @@
  :nv "gy"    #'evilnc-copy-and-comment-lines
 
  (:map evil-window-map                  ; prefix "C-w"
-   ;; Navigation
+  ;; Navigation
+   ; #'other-window in evil/config.el
   ;; "C-w"     #'ace-window
-  )  ; #'other-window in evil/config.el
+  "<left>"     #'evil-window-left
+  "<down>"     #'evil-window-down
+  "<up>"       #'evil-window-up
+  "<right>"    #'evil-window-right
+  ;; Swapping windows
+  "C-<left>"       #'+evil/window-move-left
+  "C-<down>"       #'+evil/window-move-down
+  "C-<up>"         #'+evil/window-move-up
+  "C-<right>"      #'+evil/window-move-right
+ )
 
- (:map prog-mode-map
-   :localleader
-   :desc "quickrun compile"        "q" #'quickrun-compile-only
-   )
+ (:localleader
+  ;; Localleader keybinds are not global and requires a keymap. e.g.
+  (:map +dap-running-session-mode-map
+  ;; d is used by doom for displaying dap-hydra
+   "d"  nil)
 
- :leader
+  :map prog-mode-map
+  :desc "quickrun compile"        "q" #'quickrun-compile-only
+
+  (:prefix ("d" . "dap debug")
+   :desc "Hydra" :n "h" #'dap-hydra
+   :desc "Run debug configuration" :n "d" #'dap-debug
+   :desc "dap-ui REPL" :n "r" #'dap-ui-repl
+   ;; :desc "Debug test function" :n "t" #'dap-python-debug-test-at-point  # TODO
+   :desc "Run last debug configuration" :n "l" #'dap-debug-last
+   :desc "Toggle breakpoint" :n "b" #'dap-breakpoint-toggle
+   :desc "dap continue" :n "c" #'dap-continue
+   :desc "dap next" :n "n" #'dap-next
+   :desc "Debug script" :n "s" #'dap-python-script
+   :desc "dap step in" :n "i" #'dap-step-in
+   :desc "dap eval at point" :n "ee" #'dap-eval-thing-at-point
+   :desc "dap eval region" :n "er" #'dap-eval-region
+   :desc "dap switch frame" :n "f" #'dap-switch-stack-frame
+   :desc "dap edit template" :n "t" #'dap-debug-edit-template
+   :desc "Disconnect" :n "q" #'dap-disconnect )
+  ) ;; end localleader
+
+ (:leader
  (:prefix "a"
   :desc "Ranger" "r" #'ranger
   :desc "Deer" "d" #'deer)
 
  (:prefix ("e" . "error")
-                                   "n" #'flycheck-next-error
-                                   "p" #'flycheck-previous-error)
+  "n" #'flycheck-next-error
+  "p" #'flycheck-previous-error)
 
  (:prefix ("l" . "lsp")
-   :desc "format buffer"           "=" #'lsp-format-buffer
-   :desc "action"                  "a" #'lsp-execute-code-action
-   :desc "sideline"                "l" #'lsp-ui-sideline-mode
-   :desc "doc"                     "d" #'lsp-ui-doc-mode
-   :desc "diagnostic"              "e" #'flymake-show-diagnostics-buffer
-   :desc "imenu"                   "i" #'lsp-ui-imenu
-   :desc "rename"                  "r" #'lsp-rename
-   :desc "restart"                 "R" #'lsp-restart-workspace
-   :desc "peek"                    "w" #'lsp-ui-peek-find-workspace-symbol
-   :desc "type def"                "t" #'lsp-goto-type-definition) ;was defined for state :n
+  :desc "format buffer"           "=" #'lsp-format-buffer
+  :desc "action"                  "a" #'lsp-execute-code-action
+  :desc "sideline"                "l" #'lsp-ui-sideline-mode
+  :desc "doc"                     "d" #'lsp-ui-doc-mode
+  :desc "diagnostic"              "e" #'flymake-show-diagnostics-buffer
+  :desc "imenu"                   "i" #'lsp-ui-imenu
+  :desc "rename"                  "r" #'lsp-rename
+  :desc "restart"                 "R" #'lsp-restart-workspace
+  :desc "peek"                    "w" #'lsp-ui-peek-find-workspace-symbol
+  :desc "type def"                "t" #'lsp-goto-type-definition) ;was defined for state :n
  ;; Rebind to "S"
  (:prefix ("S" . "snippets")
-   :desc "New snippet"            "n" #'yas-new-snippet
-   :desc "Insert snippet"         "i" #'yas-insert-snippet
-   :desc "Find snippet for mode"  "s" #'yas-visit-snippet-file
-   :desc "Find snippet"           "S" #'+default/find-in-snippets)
+  :desc "New snippet"            "n" #'yas-new-snippet
+  :desc "Insert snippet"         "i" #'yas-insert-snippet
+  :desc "Find snippet for mode"  "s" #'yas-visit-snippet-file
+  :desc "Find snippet"           "S" #'+default/find-in-snippets)
  (:prefix "o"
-   :desc "symbol overlay"         "o" #'symbol-overlay-put
-   :desc "symbol remove"          "q" #'symbol-overlay-remove-all)
- (:prefix ("d" . "debug")
-   :desc "Start debugger"         "d" #'+my/dap-start
+  :desc "symbol overlay"         "o" #'symbol-overlay-put
+  :desc "symbol remove"          "q" #'symbol-overlay-remove-all)
+
+ (:after dap-mode
+  (:prefix ("d" . "debug")
+   :desc "Start debugger"         "d" #'dap-debug
    :desc "Start last debugger"    "D" #'dap-debug-last
    "t" #'dap-breakpoint-toggle
    "b" #'dap-ui-breakpoints
@@ -75,9 +112,8 @@
    "q" #'dap-disconnect
    "s" #'dap-ui-sessions
    "k" #'dap-delete-session
-   "K" #'dap-delete-all-sessions
-   "S" #'realgud-short-key-mode)
-
+   "K" #'dap-delete-all-sessions))
+  ) ;; end leader
  )
 
 
