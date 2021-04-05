@@ -20,3 +20,19 @@ https://github.com/abo-abo/define-word
 
 Get org/org-cal setup here
 https://git.sr.ht/~secstate/dotfiles/tree/master/emacs/.config/doom
+* bindings
+
+Bind super-i to imenu
+(global-set-key [(super ?i)] 'imenu)
+
+Bind C-backspace to bury-buffer
+(global-set-key (kbd "C-<backspace>") 'bury-buffer)
+;; For whatever reason, this is what I get now on OSX:
+(global-set-key (kbd "<clear> <M-backspace> <clear>") 'bury-buffer)
+Set up org-capture and bind it to F8
+
+
+(global-set-key [f7] 'org-clock-in-menu)
+(global-set-key (kbd "ESC <f7>") 'org-clock-out)
+;; Also Shift-F7, in case the window manager steals Alt-F7
+(global-set-key [S-f7] 'org-clock-out)

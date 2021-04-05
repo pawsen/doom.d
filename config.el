@@ -90,6 +90,8 @@
       )
 
 (after! browse-at-remote
+  ;; Use branch name not commit hash
+  (setq browse-at-remote-prefer-symbolic t)
   (dolist (elt '(("git.magenta.dk" . "gitlab")))
     (add-to-list 'browse-at-remote-remote-type-domains elt)))
 
@@ -216,6 +218,8 @@
 (remove-hook 'dap-mode-hook #'dap-tooltip-mode)
 (remove-hook 'dap-ui-mode-hook #'dap-ui-controls-mode)
 
+(add-hook 'dap-ui-repl-mode-hook #'+word-wrap-mode)
+(add-hook 'special-mode-hook #'+word-wrap-mode)
 
 (load! "+bindings")
 (load! "+comint")
