@@ -220,6 +220,8 @@
 
 (add-hook 'dap-ui-repl-mode-hook #'+word-wrap-mode)
 (add-hook 'special-mode-hook #'+word-wrap-mode)
+;; for all REPLs?
+(add-hook 'comint-mode-hook #'+word-wrap-mode)
 
 (load! "+bindings")
 (load! "+comint")
