@@ -141,6 +141,44 @@
 (use-package  ox-moderncv
   :init (require 'ox-moderncv))
 
+;; for translations. The version on melpa does not work for me, instead
+;; sudo apt install gettext-el
+(use-package! po-mode
+  :load-path "/usr/share/emacs/site-lisp/"
+  ;;:commands (po-mode)
+  :config
+  ;; https://www.gnu.org/software/gettext/manual/html_node/Installation.html#Installation
+  (setq auto-mode-alist
+      (cons '("\\.po\\'\\|\\.po\\." . po-mode) auto-mode-alist))
+  (autoload 'po-mode "po-mode" "Major mode for translators to edit PO files" t))
+
+(after! po-mode
+  ;; You can use the following code to automatically spell check translated
+  ;; message strings using a dictionary appropriate for the language of the PO
+  ;; file.
+
+  (defun po-guess-language ()
+    "Return the language related to this PO file."
+    (save-excursion
+      (goto-char (point-min))
+      (re-search-forward po-any-msgstr-block-regexp)
+      (goto-char (match-beginning 0))
+      (if (re-search-forward
+           "\n\"Language: +\\(.+\\)\\\\n\"$"
+           (match-end 0) t)
+          (po-match-string 1))))
+
+  (defadvice po-edit-string (around setup-spell-checking (string type expand-tabs) activate)
+    "Set up spell checking in subedit buffer."
+    (let ((po-language (po-guess-language)))
+      ad-do-it
+      (if po-language
+          (progn
+            (ispell-change-dictionary po-language)
+            (turn-on-flyspell)
+            (flyspell-buffer)))))
+  )
+
 
 (add-hook! 'prog-mode-hook #'auto-fill-mode)
 
