@@ -145,12 +145,11 @@
 ;; sudo apt install gettext-el
 (use-package! po-mode
   :load-path "/usr/share/emacs/site-lisp/"
+  :mode
+  "\\.po\\'\\"
+  "\\.po\\."
   ;;:commands (po-mode)
-  :config
-  ;; https://www.gnu.org/software/gettext/manual/html_node/Installation.html#Installation
-  (setq auto-mode-alist
-      (cons '("\\.po\\'\\|\\.po\\." . po-mode) auto-mode-alist))
-  (autoload 'po-mode "po-mode" "Major mode for translators to edit PO files" t))
+  )
 
 (after! po-mode
   ;; You can use the following code to automatically spell check translated
