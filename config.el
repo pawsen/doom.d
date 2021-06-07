@@ -83,11 +83,15 @@
 )
 
 ;;; :tools magit
-(setq magit-repository-directories '(("~/git" . 2))
-      magit-save-repository-buffers nil
-      ;; Don't restore the wconf after quitting magit, it's jarring
-      magit-inhibit-save-previous-winconf t
-      )
+(after! magit
+  (setq magit-repository-directories '(("~/git" . 2))
+        magit-save-repository-buffers nil
+        ;; Don't restore the wconf after quitting magit, it's jarring
+        magit-inhibit-save-previous-winconf t
+        ;; sort branches by recent usage. Any git --sort keyword can be used
+        magit-list-refs-sortby "-committerdate"
+        )
+  )
 
 (after! browse-at-remote
   ;; Use branch name not commit hash
