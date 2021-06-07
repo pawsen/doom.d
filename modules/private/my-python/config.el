@@ -104,4 +104,14 @@
   ;; try to get indent/completion working nicely
   ;; readline support is wonky at the moment
   (setq python-shell-completion-native-enable nil)
+
+  (setq lsp-pyls-plugins-flake8-enabled t)
   )
+
+
+(use-package jinja2-mode
+  :defer
+  :commands jinja2-mode
+  :mode (("\\.jinja2$" . jinja2-mode)
+         ("\\.j2$" . jinja2-mode)
+         ("\\.j2.html$" . jinja2-mode)))

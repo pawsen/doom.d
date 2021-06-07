@@ -3,3 +3,4 @@
 
 
 (package! eval-in-repl)
+(package! jinja2-mode)
