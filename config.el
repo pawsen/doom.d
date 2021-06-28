@@ -41,6 +41,12 @@
 
 (setq
  doom-theme 'doom-dracula
+ ;; "monospace" means use the system default. However, the default is usually two
+ ;; points larger than I'd like, so I specify size 12 here.
+ doom-font (font-spec :family "JetBrainsMono" :size 12 :weight 'light)
+ doom-variable-pitch-font (font-spec :family "Noto Serif" :size 13)
+ ivy-posframe-font (font-spec :family "JetBrainsMono" :size 15)
+
  ispell-dictionary "english"
  ;; IMO, modern editors have trained a bad habit into us all: a burning need for
  ;; completion all the time -- as we type, as we breathe, as we pray to the
