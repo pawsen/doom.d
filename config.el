@@ -39,15 +39,17 @@
 ;; You can also try 'gd' (or 'C-c g d') to jump to their definition and see how
 ;; they are implemented.
 
-(setq ispell-dictionary "english"
- ;; IMO, modern editors have trained a bad habit into us all: a burning
-      ;; need for completion all the time -- as we type, as we breathe, as we
-      ;; pray to the ancient ones -- but how often do you *really* need that
-      ;; information? I say rarely. So opt for manual completion:
-      company-idle-delay nil
-      ;; Relative line numbers are fantastic for knowing how far away line
-      ;; numbers are, then ESC 12 <UP> gets you exactly where you think.
-      display-line-numbers-type 'relative
+(setq
+ doom-theme 'doom-dracula
+ ispell-dictionary "english"
+ ;; IMO, modern editors have trained a bad habit into us all: a burning need for
+ ;; completion all the time -- as we type, as we breathe, as we pray to the
+ ;; ancient ones -- but how often do you *really* need that information? I say
+ ;; rarely. So opt for manual completion:
+ company-idle-delay nil
+ ;; Relative line numbers are fantastic for knowing how far away line numbers
+ ;; are, then ESC 12 <UP> gets you exactly where you think.
+ display-line-numbers-type 'relative
  )
 
 (when IS-MAC
