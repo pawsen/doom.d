@@ -75,20 +75,12 @@
       org-ellipsis " [...] ")
 
 ;;; :lang web
-;; Add django as engine for html files
-;; TODO per directory settings
-;; Note there is a bug i web+mode, so the add+hook solution is needed
-;; https://emacs.stackexchange.com/questions/32585/set-web-mode-engine-per-directory/59709#59709
-;; TODO change indention spaces
-;; https://emacs.stackexchange.com/a/58343
-(after! web-mode
-  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.jinja?\\'" . web-mode))
-  (setq web-mode-engines-alist
-        '(("django"  . "\\.jinja\\'")
-          ("django"  . "\\.djhtml\\'")
-          ("django"  . "\\.html\\'")))
-)
+(use-package web-mode
+  :custom
+  (web-mode-markup-indent-offset 2)
+  (web-mode-css-indent-offset 2)
+  (web-mode-code-indent-offset 2))
+
 
 ;;; :tools magit
 (after! magit
