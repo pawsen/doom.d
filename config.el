@@ -172,13 +172,49 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
 (after! recentf
   (add-to-list 'recentf-exclude "/var"))
 
-;; copy files in dired asynchronius with rsync
-;; dired-rsync is already included in dired module
-(use-package dired-rsync
-  :demand t
-  :after ranger
-  :bind (:map ranger-normal-mode-map ("r" . dired-rsync))
-  :config (add-to-list 'mode-line-misc-info '(:eval dired-rsync-modeline-status 'append)))
+;;; dired
+;; dired extensions, most live as modules in dired-hacks
+;; https://github.com/Fuco1/dired-hacks/tree/master
+;; most are configured in evil-collection
+;; https://github.com/emacs-evil/evil-collection/blob/master/modes/dired/evil-collection-dired.el
+(use-package dired-ranger :ensure t
+  ;; http://pragmaticemacs.com/emacs/copy-and-paste-files-with-dired-ranger/
+  :bind (:map dired-mode-map
+              ("W" . dired-ranger-copy)
+              ("X" . dired-ranger-move)
+              ("Y" . dired-ranger-paste)))
+(use-package dired-subtree :ensure t
+  :bind (:map dired-mode-map
+         ("<backtab>" . dired-subtree-cycle)))
+(use-package dired-collapse :ensure t)
+(use-package dired-filter :ensure t)
+(use-package dired-narrow :ensure t
+  ;; http://pragmaticemacs.com/emacs/dynamically-filter-directory-listing-with-dired-narrow/
+        :bind (:map dired-mode-map
+                    ("/" . dired-narrow)))
+(use-package dired-quick-sort :ensure t
+  ;; http://pragmaticemacs.com/emacs/speedy-sorting-in-dired-with-dired-quick-sort
+  :config
+  (dired-quick-sort-setup))
+
+;; open recent directory, requires ivy (part of swiper)
+;; borrows from http://stackoverflow.com/questions/23328037/in-emacs-how-to-maintain-a-list-of-recent-directories
+(defun my/ivy-dired-recent-dirs ()
+  "Present a list of recently used directories and open the selected one in dired"
+  (interactive)
+  (let ((recent-dirs
+         (delete-dups
+          (mapcar (lambda (file)
+                    (if (file-directory-p file) file (file-name-directory file)))
+                  recentf-list))))
+
+    (let ((dir (ivy-read "Directory: "
+                         recent-dirs
+                         :re-builder #'ivy--regex
+                         :sort nil
+                         :initial-input nil)))
+      (dired dir))))
+(global-set-key (kbd "C-x C-d") 'my/ivy-dired-recent-dirs)
 
 ;; use modercn from org-mode
 (use-package  ox-moderncv

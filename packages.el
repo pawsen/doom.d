@@ -19,3 +19,10 @@
 ;; modes
 ;; (package! arduino-mode)
 (package! symbol-overlay) ; mark symbols
+
+(package! dired-subtree)
+(package! dired-narrow)
+(package! dired-filter)
+(package! dired-collapse)
+(package! dired-ranger)
+(package! dired-quick-sort)
