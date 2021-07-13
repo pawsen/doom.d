@@ -36,3 +36,8 @@ Set up org-capture and bind it to F8
 (global-set-key (kbd "ESC <f7>") 'org-clock-out)
 ;; Also Shift-F7, in case the window manager steals Alt-F7
 (global-set-key [S-f7] 'org-clock-out)
+* magit forge
+[[https://gist.github.com/Azeirah/542f1db12e3ef904abfc7e9c2e83310e][enable forge for gitlab/get API key]]
+https://www.youtube.com/watch?v=fFuf3hExF5w&list=PLhXZp00uXBk4np17N39WvB80zgxlZfVwj&index=21
+https://github.com/magit/forge/blob/master/docs/forge.org
+https://github.com/hlissner/doom-emacs/blob/develop/modules/tools/magit/README.org

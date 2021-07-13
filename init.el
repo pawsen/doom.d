@@ -105,7 +105,8 @@
         +dictionary)
        ;; (lsp +eglot)
        (lsp +peek)
-       magit             ; a git porcelain for Emacs
+       (magit)             ; a git porcelain for Emacs
+       ;; +forge)          ; porcelain for managing issues and PRs from within Emacs.
        ; make              ; run make tasks from Emacs
        (pass +auth)        ; password manager for nerds
        ;;pdf               ; pdf enhancements
