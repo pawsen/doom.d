@@ -13,13 +13,13 @@
 ;; handy tools
 ;; (package! auth-source-pass)
 (package! company-quickhelp)
+(package! lsp-ivy)
 (package! org-msg) ; mix org-mode and Message mode. For emails
 
 ;; modes
 ;; (package! arduino-mode)
 (package! symbol-overlay) ; mark symbols
 
-;; dired improvements
 (package! dired-subtree)
 (package! dired-narrow)
 (package! dired-filter)
