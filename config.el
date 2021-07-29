@@ -61,7 +61,9 @@
 (when IS-MAC
   (setq ns-use-thin-smoothing t))
 
-
+;; Implicit /g flag on evil ex substitution, because I less often want the
+;; default behavior.
+(setq evil-ex-substitute-global t)
 
 ;;; Modules
 ;;; :lang org
