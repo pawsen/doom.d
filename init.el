@@ -25,10 +25,12 @@
        (company          ; the ultimate code completion backend
         +childFrame
         +auto)           ; as-you-type code completion
-       (ivy              ; a search engine for love and life
-        +childFrame
-        +icons           ; Enables file icons for switch-{buffer,project}/find-file counsel commands.
-        +fuzzy)          ; Enables fuzzy completion for Ivy searches.
+       ;; (ivy              ; a search engine for love and life
+       ;;  +childFrame
+       ;;  +icons           ; Enables file icons for switch-{buffer,project}/find-file counsel commands.
+       ;;  +fuzzy)          ; Enables fuzzy completion for Ivy searches.
+       (vertigo
+        +icons)
 
        :ui
        ;;deft              ; notational velocity for Emacs
