@@ -219,8 +219,24 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
 (global-set-key (kbd "C-x C-d") 'my/ivy-dired-recent-dirs)
 
 ;; use modercn from org-mode
-(use-package  ox-moderncv
+(use-package!  ox-moderncv
   :init (require 'ox-moderncv))
+
+;; enable c++ syntax highlighting for arduino
+(use-package! cc-mode
+  :mode ("\\.ino\\'" . c++-mode)
+  :mode ("\\.pde\\'" . c++-mode)
+  )
+
+;; Turn on flymake, with appropriate check-syntax in Makefile
+;; XXX the string-matching does not work.
+;; (add-hook! 'cc-mode-hook #'my-cc-mode-hook)
+;; (defun my-cc-mode-hook ()
+;;   "Custom `cc-mode' behaviours."
+;;   (and buffer-file-name
+;;        (string-match "/\\(?:\\.ino\\)/" buffer-file-name)
+;;        (flymake-mode 1)))
+
 
 ;; for translations. The version on melpa does not work for me, instead
 ;; sudo apt install gettext-el
