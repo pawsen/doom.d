@@ -85,14 +85,20 @@
 
 
 ;;; :tools magit
-(after! magit
-  (setq magit-repository-directories '(("~/git" . 2))
-        magit-save-repository-buffers nil
-        ;; Don't restore the wconf after quitting magit, it's jarring
-        magit-inhibit-save-previous-winconf t
-        ;; sort branches by recent usage. Any git --sort keyword can be used
-        magit-list-refs-sortby "-committerdate"
-        )
+(use-package! magit
+  :bind (:map magit-file-section-map
+         ("M-RET" . magit-diff-visit-file-other-window)
+         :map magit-hunk-section-map
+         ("M-RET" . magit-diff-visit-file-other-window))
+  :config
+  (setq
+   magit-repository-directories '(("~/git" . 2))
+   magit-save-repository-buffers nil
+   ;; Don't restore the wconf after quitting magit, it's jarring
+   magit-inhibit-save-previous-winconf t
+   ;; sort branches by recent usage. Any git --sort keyword can be used
+   magit-list-refs-sortby "-committerdate"
+   )
   )
 
 (after! browse-at-remote
