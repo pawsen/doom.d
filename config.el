@@ -185,22 +185,22 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
 ;; https://github.com/Fuco1/dired-hacks/tree/master
 ;; most are configured in evil-collection
 ;; https://github.com/emacs-evil/evil-collection/blob/master/modes/dired/evil-collection-dired.el
-(use-package dired-ranger :ensure t
+(use-package! dired-ranger
   ;; http://pragmaticemacs.com/emacs/copy-and-paste-files-with-dired-ranger/
   :bind (:map dired-mode-map
-              ("W" . dired-ranger-copy)
-              ("X" . dired-ranger-move)
-              ("Y" . dired-ranger-paste)))
-(use-package dired-subtree :ensure t
+         ("W" . dired-ranger-copy)
+         ("X" . dired-ranger-move)
+         ("Y" . dired-ranger-paste)))
+(use-package! dired-subtree
   :bind (:map dired-mode-map
          ("<backtab>" . dired-subtree-cycle)))
-(use-package dired-collapse :ensure t)
-(use-package dired-filter :ensure t)
-(use-package dired-narrow :ensure t
+(use-package! dired-collapse)
+(use-package! dired-filter)
+(use-package! dired-narrow
   ;; http://pragmaticemacs.com/emacs/dynamically-filter-directory-listing-with-dired-narrow/
-        :bind (:map dired-mode-map
-                    ("/" . dired-narrow)))
-(use-package dired-quick-sort :ensure t
+  :bind (:map dired-mode-map
+         ("/" . dired-narrow)))
+(use-package! dired-quick-sort
   ;; http://pragmaticemacs.com/emacs/speedy-sorting-in-dired-with-dired-quick-sort
   :config
   (dired-quick-sort-setup))
