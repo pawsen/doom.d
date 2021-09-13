@@ -25,10 +25,11 @@
        (company          ; the ultimate code completion backend
         +childFrame
         +auto)           ; as-you-type code completion
-       (ivy              ; a search engine for love and life
-        +childFrame
-        +icons           ; Enables file icons for switch-{buffer,project}/find-file counsel commands.
-        +fuzzy)          ; Enables fuzzy completion for Ivy searches.
+       ;; (ivy              ; a search engine for love and life
+       ;;  +childFrame
+       ;;  +icons           ; Enables file icons for switch-{buffer,project}/find-file counsel commands.
+       ;;  +fuzzy)          ; Enables fuzzy completion for Ivy searches.
+       (vertico + icons)  ; the search engine of the future
 
        :ui
        ;;deft              ; notational velocity for Emacs
@@ -76,7 +77,7 @@
         +icons)
        electric          ; smarter, keyword-based electric-indent
        ; ibuffer           ; interactive buffer management
-       undo
+       undo              ; persistent, smarter undo for your inevitable mistakes
        vc                ; version-control and Emacs, sitting in a tree
 
        :term
@@ -107,7 +108,7 @@
        (lsp +peek)
        (magit)             ; a git porcelain for Emacs
        ;; +forge)          ; porcelain for managing issues and PRs from within Emacs.
-       ; make              ; run make tasks from Emacs
+       make              ; run make tasks from Emacs
        (pass +auth)        ; password manager for nerds
        ;;pdf               ; pdf enhancements
        ;;prodigy           ; FIXME managing external services & code builders
@@ -118,7 +119,7 @@
 
        :os
        (:if IS-MAC macos)  ; MacOS-specific commands
-       ;; tty                 ; configures Emacs for terminal usage.
+       tty                 ; configures Emacs for terminal usage.
 
        :lang
        ;;agda              ; types of types of types of types...
@@ -137,10 +138,11 @@
        ;;ess               ; emacs speaks statistics
        ;;faust             ; dsp, but you get to keep your soul
        ;;fsharp           ; ML stands for Microsoft's Language
-       ;;go                ; the hipster dialect
+       ;;(go +lsp)           ; the hipster dialect
        ;;(haskell +intero) ; a language that's lazier than I am
        ;;hy                ; readability of scheme w/ speed of python
        ;;idris             ;
+       json
        ;;(java +lsp) ; the poster child for carpal tunnel syndrome
        ;;(javascript +lsp)        ; all(hope(abandon(ye(who(enter(here))))))
        ;;julia             ; a better, faster MATLAB
@@ -197,7 +199,7 @@
        :app
        ;;calendar
        ;;irc               ; how neckbeards socialize
-       (rss +org)        ; emacs as an RSS reader
+       ;; (rss +org)        ; emacs as an RSS reader
        ;;twitter           ; twitter client https://twitter.com/vnought
        everywhere          ; Spawn an emacsclient window for quick edits.
 

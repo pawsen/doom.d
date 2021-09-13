@@ -66,13 +66,6 @@
   ) ;; end localleader
 
  (:leader
- (:prefix "a"
-  :desc "Ranger" "r" #'ranger
-  :desc "Deer" "d" #'deer)
-
- (:prefix ("e" . "error")
-  "n" #'flycheck-next-error
-  "p" #'flycheck-previous-error)
 
  (:prefix ("l" . "lsp")
   :desc "format buffer"           "=" #'lsp-format-buffer

@@ -65,6 +65,32 @@
 ;; default behavior.
 (setq evil-ex-substitute-global t)
 
+;;; window management
+;; https://tecosaur.github.io/emacs-config/config.html#windows
+(setq evil-vsplit-window-right t
+      evil-split-window-below t)
+
+;; advises the split functions to prompt for a file to open
+(defadvice! prompt-for-buffer (&rest _)
+  :after '(evil-window-split evil-window-vsplit)
+  (consult-buffer))
+
+;; layout rotaion
+(map! :map evil-window-map
+      "SPC" #'rotate-layout
+      ;; Navigation
+      "<left>"     #'evil-window-left
+      "<down>"     #'evil-window-down
+      "<up>"       #'evil-window-up
+      "<right>"    #'evil-window-right
+      ;; Swapping windows
+      "C-<left>"       #'+evil/window-move-left
+      "C-<down>"       #'+evil/window-move-down
+      "C-<up>"         #'+evil/window-move-up
+      "C-<right>"      #'+evil/window-move-right)
+
+
+
 ;;; Modules
 ;;; :lang org
 (setq org-directory "~/projects/org/"
@@ -147,6 +173,7 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
                                    (when smerge-mode
                                      (unpackaged/smerge-hydra/body)))))
 
+
 ;;; :app everywhere
 ;; Easier to match with a bspwm rule:
 ;;   bspc rule -a 'Emacs:emacs-everywhere' state=floating sticky=on
@@ -185,23 +212,30 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
 ;; https://github.com/Fuco1/dired-hacks/tree/master
 ;; most are configured in evil-collection
 ;; https://github.com/emacs-evil/evil-collection/blob/master/modes/dired/evil-collection-dired.el
+
+;; http://pragmaticemacs.com/emacs/copy-and-paste-files-with-dired-ranger/
 (use-package! dired-ranger
-  ;; http://pragmaticemacs.com/emacs/copy-and-paste-files-with-dired-ranger/
+  :init (require 'dired-ranger)
   :bind (:map dired-mode-map
          ("W" . dired-ranger-copy)
          ("X" . dired-ranger-move)
          ("Y" . dired-ranger-paste)))
 (use-package! dired-subtree
+  :init (require 'dired-subtree)
   :bind (:map dired-mode-map
          ("<backtab>" . dired-subtree-cycle)))
-(use-package! dired-collapse)
-(use-package! dired-filter)
+(use-package! dired-collapse
+   :init (require 'dired-collapse))
+(use-package! dired-filter
+  :init (require 'dired-filter))
+;; http://pragmaticemacs.com/emacs/dynamically-filter-directory-listing-with-dired-narrow/
 (use-package! dired-narrow
-  ;; http://pragmaticemacs.com/emacs/dynamically-filter-directory-listing-with-dired-narrow/
+  :init (require 'dired-narrow)
   :bind (:map dired-mode-map
          ("/" . dired-narrow)))
+;; http://pragmaticemacs.com/emacs/speedy-sorting-in-dired-with-dired-quick-sort
 (use-package! dired-quick-sort
-  ;; http://pragmaticemacs.com/emacs/speedy-sorting-in-dired-with-dired-quick-sort
+  :init (require 'dired-quick-sort)
   :config
   (dired-quick-sort-setup))
 
