@@ -130,8 +130,11 @@
 (after! browse-at-remote
   ;; Use branch name not commit hash
   (setq browse-at-remote-prefer-symbolic t)
-  (dolist (elt '(("git.magenta.dk" . "gitlab")))
-    (add-to-list 'browse-at-remote-remote-type-domains elt)))
+  ;; use regex to map domain to type of VC
+  ;; https://github.com/rmuslimov/browse-at-remote/issues/82
+  (dolist (elt '(("^git\\.magenta\\.dk$" . "gitlab")))
+    (add-to-list 'browse-at-remote-remote-type-regexps elt))
+  )
 
 ;; https://github.com/alphapapa/unpackaged.el#hydra
 (use-package! smerge-mode
