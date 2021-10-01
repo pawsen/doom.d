@@ -321,27 +321,29 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
 
 (add-hook! 'prog-mode-hook #'auto-fill-mode)
 
+;; https://emacs-lsp.github.io/lsp-mode/tutorials/how-to-turn-off/
 (after! lsp-ui
-  (setq lsp-ui-sideline-enable nil
+  (setq
+   lsp-ui-sideline-enable t
+   lsp-ui-doc-enable nil
 ;;         lsp-ui-doc-include-signature t
 ;;         lsp-ui-doc-max-height 15
 ;;         lsp-ui-doc-max-width 100
 ;;         lsp-ui-doc-position 'at-point))
    ))
 
-
-;; Watch this thread on how to disable dap-ui-controls
-;; https://github.com/ztlevi/doom-config/blob/master/%2Bprog.el#L169
 (after! lsp-mode
-  (setq lsp-headerline-breadcrumb-enable t
-        lsp-enable-symbol-highlighting nil
-        lsp-enable-file-watchers nil
-        ;; Don’t guess project root
-        ;; In case we get a wrong workspace root, we can delete it with
-        ;; lsp-workspace-folders-remove
-        lsp-auto-guess-root nil
-        +lsp-company-backends '(company-capf :with company-yasnippet)
-  ))
+  (setq
+   lsp-headerline-breadcrumb-enable t
+   ;; lsp-enable-symbol-highlighting nil
+   ;; lsp-enable-file-watchers nil
+
+   ;; Don’t guess project root
+   ;; In case we get a wrong workspace root, we can delete it with
+   ;; lsp-workspace-folders-remove
+   ;; lsp-auto-guess-root nil
+   ;; +lsp-company-backends '(company-capf :with company-yasnippet)
+   ))
 
 (after! lsp-clients
   (set-lsp-priority! 'clangd 1))  ; ccls has priority 0
