@@ -173,9 +173,10 @@
        (python             ; beautiful is better than ugly
         +lsp
         ;conda
-        ; +poetry
+        ;cython
+        +poetry
         +pyenv
-        +pyright) ;+pyenv)
+        +pyright)
        ;;qt                ; the 'cutest' gui framework ever
        ;;racket            ; a DSL for DSLs
        ;;rest              ; Emacs as a REST client
