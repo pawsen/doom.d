@@ -27,10 +27,12 @@
     (if (and line (string-match trace line))
         (kill-whole-line)
       (progn
-        (back-to-indentation)
-        (insert trace)
+        (end-of-line)
         (insert "\n")
-        (python-indent-line))))
+        (indent-according-to-mode)
+        ;; (python-indent-line)
+        (insert trace)
+        )))
   (+python/annotate-pdb))
 
 ;;;###autoload
