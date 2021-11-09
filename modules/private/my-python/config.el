@@ -22,6 +22,12 @@
   ))
 
 
+;; venv is already ignored, just kept as an example
+;; https://emacs-lsp.github.io/lsp-mode/page/file-watchers/
+;; https://github.com/emacs-lsp/lsp-mode/blob/master/lsp-mode.el#L306
+;; (with-eval-after-load 'lsp-mode
+;;   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.venv\\'"))
+
 ;; https://github.com/ztlevi/LSP-Debug
 ;; https://github.com/ztlevi/doom-config/blob/master/%2Bprog.el
 ;; https://code.visualstudio.com/docs/python/debugging#_set-configuration-options
