@@ -21,6 +21,16 @@
    )
   ))
 
+(use-package! poetry
+  :when (featurep! +poetry)
+  :after python
+  :init
+  ;; was `switch-buffer': check when switching buffer
+  (setq poetry-tracking-strategy 'projectile)
+  ;; if poetry is still slow try removing the hook
+  ;; :config
+  ;; (remove-hook 'python-mode-hook 'poetry-tracking-mode)
+  )
 
 ;; venv is already ignored, just kept as an example
 ;; https://emacs-lsp.github.io/lsp-mode/page/file-watchers/
