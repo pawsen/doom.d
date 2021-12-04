@@ -28,8 +28,8 @@
   ;; was `switch-buffer': check when switching buffer
   (setq poetry-tracking-strategy 'projectile)
   ;; if poetry is still slow try removing the hook
-  ;; :config
-  ;; (remove-hook 'python-mode-hook 'poetry-tracking-mode)
+  :config
+  (remove-hook 'python-mode-hook 'poetry-tracking-mode)
   )
 
 ;; venv is already ignored, just kept as an example
@@ -107,23 +107,14 @@
 (setenv "WORKON_HOME" "~/.pyenv/versions")
 
 (after! python
-  (defadvice! +ipython-use-virtualenv (orig-fn &rest args)
-    "Use the Python binary from the current virtual environment."
-    :around #'+python/open-repl
-    (if (getenv "VIRTUAL_ENV")
-        (let ((python-shell-interpreter (executable-find "ipython")))
-          (apply orig-fn args))
-      (apply orig-fn args)))
-
-
+  ;; ise ipython repl instead of python
   (set-repl-handler! 'python-mode #'+python/open-ipython-repl)
-  ;; try to get indent/completion working nicely
-  ;; readline support is wonky at the moment
-  (setq python-shell-completion-native-enable nil)
-
-  (setq lsp-pyls-plugins-flake8-enabled t)
   )
 
+(after! lsp
+  ;; enable flake8
+  (setq lsp-pyls-plugins-flake8-enabled t)
+  )
 
 (use-package jinja2-mode
   :defer
