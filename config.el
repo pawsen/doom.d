@@ -186,6 +186,9 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
 ;; to hide it.
 (add-hook 'emacs-everywhere-init-hooks #'hide-mode-line-mode)
 
+;; disable opening up the *Messages* buffer when clicking the on the minibuffer
+(define-key minibuffer-inactive-mode-map [mouse-1] #'ignore)
+
 ;; Semi-center it over the target window, rather than at the cursor position
 ;; (which could be anywhere).
 (defadvice! my-emacs-everywhere-set-frame-position (&rest _)
