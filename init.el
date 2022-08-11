@@ -49,13 +49,13 @@
         +defaults)       ; default popup rules
        ;;pretty-code       ; replace bits of code with pretty symbols
        ;;tabs              ; an tab bar for Emacs
-       treemacs          ; a project drawer, like neotree but cooler
-       ;; tree-sitter       ; syntax highligtning
+       ;; treemacs          ; a project drawer, like neotree but cooler
        ;;unicode           ; extended unicode support for various languages
-       vc-gutter         ; vcs diff in the fringe
+       (vc-gutter +pretty)  ; vcs diff in the fringe
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
        ;; window-select     ; visually switch windows
        workspaces        ; tab emulation, persistence & separate workspaces
+       ;; zen              ; distraction-free coding or writing
 
        :editor
        (evil +everywhere); come to the dark side, we have cookies
@@ -73,7 +73,8 @@
 
        :emacs
        (dired
-        ;; +ranger    ; making dired pretty [functional]
+        ;; I use ranger because it can show thumbnails out-of-the-box
+        +ranger         ; making dired pretty [functional]
         +icons)
        electric          ; smarter, keyword-based electric-indent
        ; ibuffer           ; interactive buffer management
@@ -108,13 +109,14 @@
        (lsp +peek)
        (magit)             ; a git porcelain for Emacs
        ;; +forge)          ; porcelain for managing issues and PRs from within Emacs.
-       make              ; run make tasks from Emacs
+       ;; make              ; run make tasks from Emacs
        (pass +auth)        ; password manager for nerds
        ;;pdf               ; pdf enhancements
        ;;prodigy           ; FIXME managing external services & code builders
        ;;rgb               ; creating color strings
        ;;terraform         ; infrastructure as code
        ;;tmux              ; an API for interacting with tmux
+       tree-sitter       ; syntax highligtning
        ;;upload            ; map local to remote projects via ssh/ftp
 
        :os
@@ -160,7 +162,7 @@
        (org              ; organize your plain life in plain text
         +dragndrop       ; drag & drop files/images into org buffers
         +journal
-        ;;+roam
+        ;;+roam2
         ;;+hugo            ; use Emacs for hugo blogging
         ; +jupyter        ; ipython/jupyter support for babel
         +pandoc          ; export-with-pandoc support
@@ -171,12 +173,14 @@
        ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
        (python             ; beautiful is better than ugly
+        ;; https://github.com/doomemacs/doomemacs/tree/master/modules/lang/python#module-flags
         +lsp
         ;conda
         ;cython
-        +poetry
-        +pyenv
-        +pyright)
+        ;+poetry
+        ;+pyenv
+        +pyright
+        +tree-sitter)      ; Leverages tree-sitter for better syntax highlighting
        ;;qt                ; the 'cutest' gui framework ever
        ;;racket            ; a DSL for DSLs
        ;;rest              ; Emacs as a REST client
