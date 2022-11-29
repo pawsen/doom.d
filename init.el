@@ -126,7 +126,7 @@
        :lang
        ;;agda              ; types of types of types of types...
        ;;assembly          ; assembly for fun or debugging
-       (cc +lsp)           ; C/C++/Obj-C madness
+       (cc +lsp +tree-sitter)           ; C/C++/Obj-C madness
        ;;(clojure +lsp)           ; java with a lisp
        common-lisp       ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
@@ -146,7 +146,7 @@
        ;;idris             ;
        json
        ;;(java +lsp) ; the poster child for carpal tunnel syndrome
-       ;;(javascript +lsp)        ; all(hope(abandon(ye(who(enter(here))))))
+       ;; (javascript +lsp +tree-sitter)       ; all(hope(abandon(ye(who(enter(here))))))
        ;;julia             ; a better, faster MATLAB
        ;;kotlin            ; a better, slicker Java(Script)
        ;;latex             ; writing papers in Emacs has never been so fun
@@ -157,14 +157,14 @@
         +grip)             ; live github-style previews of your markdown (or org) files.
                            ; <localleader> p
        ;;nim               ; python + lisp at the speed of c
-       nix               ; I hereby declare "nix geht mehr!"
+       (nix +tree-sitter)  ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
        (org              ; organize your plain life in plain text
         +dragndrop       ; drag & drop files/images into org buffers
         +journal
         ;;+roam2
         ;;+hugo            ; use Emacs for hugo blogging
-        ; +jupyter        ; ipython/jupyter support for babel
+        +jupyter        ; ipython/jupyter support for babel
         +pandoc          ; export-with-pandoc support
         ;;+pomodoro        ; be fruitful with the tomato technique
         +present)        ; using org-mode for presentations
@@ -189,12 +189,15 @@
        ;;(rust +lsp)              ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        ;;scala             ; java, but good
        ;;scheme            ; a fully conniving family of lisps
-       (sh +zsh)           ; she sells {ba,z,fi}sh shells on the C xor
+       (sh
+        +lsp
+        +fish)           ; she sells {ba,z,fi}sh shells on the C xor
        ;;solidity          ; do you need a blockchain? No.
        ;;swift             ; who asked for emoji variables?
        ;;terra             ; Earth and Moon in alignment for performance.
        (web                ; the tubes
         +lsp
+        +tree-sitter
         +web-django-mode)
        yaml                ; JSON, but readable
 
