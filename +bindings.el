@@ -13,6 +13,8 @@
  ;; localleader
  ;; :m ","    nil
 
+ :o "o" #'evil-inner-symbol
+
  ;; outline
  :n "[ M-u" #'symbol-overlay-switch-backward
  :n "] M-i" #'symbol-overlay-switch-forward

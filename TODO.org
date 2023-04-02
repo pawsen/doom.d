@@ -1,4 +1,49 @@
 #+TITLE: TODO
+* fix:
+
+emacs scratch buffer can kill the daemon
+
+super + shift + grave
+
+log from journalctl -f --user-unit emacs
+** No other emacsclient frame open
+
+kill scratch buffer with C-x C-c
+
+Apr 02 15:58:00 tiger systemd[1873]: Started Emacs: the extensible, self-documenting text editor.
+Apr 02 15:58:26 tiger emacsclient[72508]: /nix/store/gq317qq0bvr0pv8gaxpvpf1l3r8k2r5c-emacs-git-20230319.0/bin/emacsclient: can't find socket; have you started the server?
+Apr 02 15:58:26 tiger emacsclient[72508]: /nix/store/gq317qq0bvr0pv8gaxpvpf1l3r8k2r5c-emacs-git-20230319.0/bin/emacsclient: To start the server in Emacs, type "M-x server-start".
+Apr 02 15:58:26 tiger emacsclient[72508]: /nix/store/gq317qq0bvr0pv8gaxpvpf1l3r8k2r5c-emacs-git-20230319.0/bin/emacsclient: No socket or alternate editor.  Please use:
+Apr 02 15:58:26 tiger emacsclient[72508]:         --socket-name
+Apr 02 15:58:26 tiger emacsclient[72508]:         --server-file      (or environment variable EMACS_SERVER_FILE)
+Apr 02 15:58:26 tiger emacsclient[72508]:         --alternate-editor (or environment variable ALTERNATE_EDITOR)
+Apr 02 15:58:26 tiger systemd[1873]: emacs.service: Control process exited, code=exited, status=1/FAILURE
+Apr 02 15:58:26 tiger systemd[1873]: emacs.service: Failed with result 'exit-code'.
+Apr 02 15:58:26 tiger systemd[1873]: emacs.service: Consumed 6.685s CPU time.
+Apr 02 15:58:26 tiger systemd[1873]: emacs.service: Scheduled restart job, restart counter is at 13.
+Apr 02 15:58:26 tiger systemd[1873]: Stopped Emacs: the extensible, self-documenting text editor.
+Apr 02 15:58:26 tiger systemd[1873]: emacs.service: Consumed 6.685s CPU time.
+Apr 02 15:58:26 tiger systemd[1873]: Starting Emacs: the extensible, self-documenting text editor...
+
+
+closing the window with super + q does not kill the daemon
+
+** Other emacslient frame exists
+
+kill scratch buffer with C-x C-c will close the other emacs frame as well. Server will not crash
+
+** check function in ~/.doom.d/misc/autoload/misc.el
+
+Is (defun open-scratch-frame (&optional fn) correct?
+
+Try running 
+
+emacsclient --eval "(open-scratch-frame)"
+
+from a terminal.
+
+Maybe also disable C-x C-c as a way to kill emacs.!
+
 * LSP
 https://emacs-lsp.github.io/lsp-mode/tutorials/CPP-guide/
 

@@ -16,7 +16,7 @@
 
 ;; doom reload, SPC h r r
 
-(setq doom-localleader-key ",")
+;; (setq doom-localleader-key ",")
 ;; (setq doom-localleader-alt-key ",")
 
 (doom! :input
@@ -40,7 +40,7 @@
        hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
        hydra
        ;;indent-guides     ; highlighted indent columns
-       (modeline +light)          ; snazzy, Atom-inspired modeline, plus API
+       modeline          ; snazzy, Atom-inspired modeline, plus API
        nav-flash         ; blink the current line after jumping
        ;;neotree           ; a project drawer, like NERDTree for vim
        ophints           ; highlight the region an operation acts on
@@ -82,10 +82,10 @@
        vc                ; version-control and Emacs, sitting in a tree
 
        :term
-       eshell            ; a consistent, cross-platform shell (WIP)
+       ;; eshell            ; a consistent, cross-platform shell (WIP)
        ;;shell             ; a terminal REPL for Emacs
        ;;term              ; terminals in Emacs
-       ;;vterm             ; another terminals in Emacs
+       vterm             ; another terminals in Emacs
 
        :checkers
        ;; grammar           ; install LT here: /usr/share/java/languagetool/

@@ -41,12 +41,10 @@
 
 (setq
  doom-theme 'doom-dracula
-
  ;; "monospace" means use the system default. However, the default is usually two
  ;; points larger than I'd like, so I specify size 12 here.
- ;; doom-font (font-spec :family "JetBrainsMono" :size 12 :weight 'light)
- ;; doom-variable-pitch-font (font-spec :family "Noto Serif" :size 13)
- ;; ivy-posframe-font (font-spec :family "JetBrainsMono" :size 15)
+ doom-font (font-spec :family "JetBrainsMono" :size 12 :weight 'light)
+ doom-variable-pitch-font (font-spec :family "DejaVu Sans" :size 13)
 
  ispell-dictionary "english"
  ;; IMO, modern editors have trained a bad habit into us all: a burning need for
@@ -94,7 +92,7 @@
 
 ;;; Modules
 ;;; :lang org
-(setq org-directory "~/projects/org/"
+(setq org-directory "~/git/org/"
       org-archive-location (concat org-directory ".archive/%s::")
       org-roam-directory (concat org-directory "notes/")
       org-roam-db-location (concat org-roam-directory ".org-roam.db")
@@ -326,18 +324,14 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
 (add-hook! 'prog-mode-hook #'auto-fill-mode)
 
 ;; https://emacs-lsp.github.io/lsp-mode/tutorials/how-to-turn-off/
-(after! lsp-ui
-  (setq
-   lsp-ui-sideline-enable t
-   lsp-ui-doc-enable nil
-;;         lsp-ui-doc-include-signature t
-;;         lsp-ui-doc-max-height 15
-;;         lsp-ui-doc-max-width 100
-;;         lsp-ui-doc-position 'at-point))
-   ))
-
 (after! lsp-mode
   (setq
+   lsp-enable-symbol-highlighting nil
+   ;; If an LSP server isn't present when I start a prog-mode buffer, you
+   ;; don't need to tell me. I know. On some systems I don't care to have a
+   ;; whole development environment for some ecosystems.
+   lsp-enable-suggest-server-download nil
+
    lsp-headerline-breadcrumb-enable t
    ;; lsp-enable-symbol-highlighting nil
    ;; lsp-enable-file-watchers nil
@@ -348,6 +342,9 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
    ;; lsp-auto-guess-root nil
    ;; +lsp-company-backends '(company-capf :with company-yasnippet)
    ))
+(after! lsp-ui
+  (setq lsp-ui-sideline-enable nil  ; no more useful than flycheck
+        lsp-ui-doc-enable nil))     ; redundant with K
 
 (after! lsp-clients
   (set-lsp-priority! 'clangd 1))  ; ccls has priority 0
