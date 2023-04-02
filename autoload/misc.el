@@ -42,7 +42,7 @@ you're done. This can be called from an external shell script."
                                 (right-fringe . 0)
                                 (undecorated . t)
                                 ,(if IS-LINUX '(display . ":0")))))))
-    (setq +hlissner--scratch-frame (or frame posframe))
+    (setq +hlissner--scratch-frame (or frame preframe))
     (select-frame-set-input-focus +hlissner--scratch-frame)
     (when frame
       (with-selected-frame frame
