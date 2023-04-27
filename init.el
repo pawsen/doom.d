@@ -110,12 +110,12 @@
        (magit)             ; a git porcelain for Emacs
        ;; +forge)          ; porcelain for managing issues and PRs from within Emacs.
        ;; make              ; run make tasks from Emacs
-       (pass +auth)        ; password manager for nerds
+       ;; (pass +auth)        ; password manager for nerds
        ;;pdf               ; pdf enhancements
        ;;prodigy           ; FIXME managing external services & code builders
        ;;rgb               ; creating color strings
        ;;terraform         ; infrastructure as code
-       ;;tmux              ; an API for interacting with tmux
+       ;; tmux              ; an API for interacting with tmux
        tree-sitter       ; syntax highligtning
        ;;upload            ; map local to remote projects via ssh/ftp
 
