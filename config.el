@@ -46,6 +46,11 @@
  doom-font (font-spec :family "JetBrainsMono" :size 12 :weight 'light)
  doom-variable-pitch-font (font-spec :family "DejaVu Sans" :size 13)
 
+ ;; the nerdfont name installed with Nix is "SymbolsNerdFontMono-Regular.ttf",
+ ;; not NFM.ttf as doom doctor expects.
+ ;; https://github.com/doomemacs/doomemacs/issues/7431#issuecomment-1722663411
+ ;; nerd-icons-font-names '("SymbolsNerdFontMono-Regular.ttf")
+
  ispell-dictionary "english"
  ;; IMO, modern editors have trained a bad habit into us all: a burning need for
  ;; completion all the time -- as we type, as we breathe, as we pray to the
