@@ -121,6 +121,14 @@
       org-startup-folded 'overview
       org-ellipsis " [...] ")
 
+;; exclude all headlines with the ATTACH tag from the Org-roam database
+;; Customizing Node Caching
+;; https://www.orgroam.com/manual.html#Customizing-Node-Caching
+;; (specific  https://www.orgroam.com/manual.html#What-to-cache-1 )
+(setq org-roam-db-node-include-function
+      (lambda ()
+        (not (member "ATTACH" (org-get-tags)))))
+
 ;;; :lang web
 (use-package web-mode
   :custom
@@ -422,6 +430,20 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
 (add-hook 'special-mode-hook #'+word-wrap-mode)
 ;; for all REPLs?
 (add-hook 'comint-mode-hook #'+word-wrap-mode)
+
+
+;; change org-attach (C-c C-a a / SPC m a a) default source directory
+;; temporarily set the function read-file-name to look in the target folder.
+;; https://emacs.stackexchange.com/a/73460
+(defun azr/org-attach-read-file-name-downloads (&rest args)
+  '("Select file to attach: " "~/Downloads/"))
+
+(defun azr/org-attach ()
+  (interactive)
+  (advice-add 'read-file-name :filter-args 'azr/org-attach-read-file-name-downloads)
+  (unwind-protect ; make sure to remove advice if user cancels org-attach
+      (org-attach)
+    (advice-remove 'read-file-name 'azr/org-attach-read-file-name-downloads)))
 
 (load! "+bindings")
 (load! "+comint")

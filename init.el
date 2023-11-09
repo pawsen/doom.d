@@ -20,11 +20,11 @@
 ;; (setq doom-localleader-alt-key ",")
 
 (doom! :input
-
        :completion
        (company          ; the ultimate code completion backend
-        +childFrame
-        +auto)           ; as-you-type code completion
+        +childFrame         ; Display completion candidates in a child frame rather than an overlay or tooltip.
+        ;; +tng             ; Enables completion using only TAB(and S-TAB) instead of C-SPC. Incompatible with +childframe.
+        )
        ;; (ivy              ; a search engine for love and life
        ;;  +childFrame
        ;;  +icons           ; Enables file icons for switch-{buffer,project}/find-file counsel commands.
@@ -161,8 +161,8 @@
        ;;ocaml             ; an objective camel
        (org              ; organize your plain life in plain text
         +dragndrop       ; drag & drop files/images into org buffers
-        +journal
-        ;;+roam2
+        ;; +journal
+        +roam2
         ;;+hugo            ; use Emacs for hugo blogging
         +jupyter        ; ipython/jupyter support for babel
         +pandoc          ; export-with-pandoc support
@@ -212,6 +212,7 @@
        ;; (rss +org)        ; emacs as an RSS reader
        ;;twitter           ; twitter client https://twitter.com/vnought
        everywhere          ; Spawn an emacsclient window for quick edits.
+       ;; ereader
 
        :config
        ;;literate
