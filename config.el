@@ -74,6 +74,26 @@
   :after '(evil-window-split evil-window-vsplit)
   (consult-buffer))
 
+
+;; Bury compile buffer
+;; Assuming the buffer finishes successfully, close after 1 second.
+(defun bury-compile-buffer-if-successful (buffer string)
+  "Bury a compilation buffer if succeeded without warnings "
+  (when (and (eq major-mode 'comint-mode)
+             (string-match "finished" string)
+             (not
+              (with-current-buffer buffer
+                (search-forward "warning" nil t))))
+    (run-with-timer 1 nil
+                    (lambda (buf)
+                      (let ((window (get-buffer-window buf)))
+                        (when (and (window-live-p window)
+                                   (eq buf (window-buffer window)))
+                          (delete-window window))))
+                    buffer)))
+(add-hook 'compilation-finish-functions #'bury-compile-buffer-if-successful)
+
+
 ;; layout rotaion
 (map! :map evil-window-map
       "SPC" #'rotate-layout
