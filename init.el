@@ -163,7 +163,7 @@
         +dragndrop       ; drag & drop files/images into org buffers
         ;; +journal
         +roam2
-        ;;+hugo            ; use Emacs for hugo blogging
+        +hugo            ; use Emacs for hugo blogging
         +jupyter        ; ipython/jupyter support for babel
         +pandoc          ; export-with-pandoc support
         ;;+pomodoro        ; be fruitful with the tomato technique
