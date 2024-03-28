@@ -383,30 +383,9 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
   (set-lsp-priority! 'clangd 1))  ; ccls has priority 0
 
 (after! dap-mode
+  ;; DAP expects ptvsd by default as the Python debugger, however debugpy is recommended.
+  (setq dap-python-debugger 'debugpy)
 
-
-  ;; (setq dap-auto-show-output t)
-  ;; https://github.com/emacs-lsp/dap-mode/blob/master/dap-mode.el#L217
-  ;; dap-auto-configure-features '(sessions locals breakpoints expressions controls tooltip)
-  (setq dap-output-window-max-height 50)
-  (setq dap-output-window-min-height 10)
-  (setq dap-auto-configure-features '(locals))
-
-  ;; https://github.com/emacs-lsp/dap-mode/blob/master/dap-ui.el#L167
-  ;; width/height is in percent of screen size
-  (setq dap-ui-buffer-configurations
-        `((,"*dap-ui-locals*"  . ((side . right) (slot . 1) (window-width . 0.30)))
-          (,"*dap-ui-repl*" . ((side . right) (slot . 2) (window-width . 0.30)))
-          (,"*dap-ui-expressions*" . ((side . right) (slot . 1) (window-width . 0.20)))
-          (,"*dap-ui-sessions*" . ((side . right) (slot . 1) (window-width . 0.20)))
-          (,"*dap-ui-breakpoints*" . ((side . left) (slot . 2) (window-width . , 0.20)))
-          (,"*debug-window*" . ((side . bottom) (slot . 1) (window-height . 0.30)))))
-
-  (defun my/window-visible (b-name)
-    "Return whether B-NAME is visible."
-    (-> (-compose 'buffer-name 'window-buffer)
-        (-map (window-list))
-        (-contains? b-name)))
 
   (defun my/show-debug-windows (session)
     "Show debug windows."
@@ -427,11 +406,6 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
 
   (add-hook 'dap-terminated-hook 'my/hide-debug-windows)
   )
-
-(remove-hook 'dap-mode-hook #'dap-tooltip-mode)
-(remove-hook 'dap-ui-mode-hook #'dap-ui-controls-mode)
-
-(add-hook 'dap-ui-repl-mode-hook #'+word-wrap-mode)
 (add-hook 'special-mode-hook #'+word-wrap-mode)
 ;; for all REPLs?
 (add-hook 'comint-mode-hook #'+word-wrap-mode)
