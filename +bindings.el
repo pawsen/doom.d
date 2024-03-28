@@ -23,7 +23,7 @@
  :n  "]p"    #'+my/paste-above
  :n  "[p"    #'+my/paste-below
 
- :nv "gy"    #'evilnc-copy-and-comment-lines
+ ;; :nv "gy"    #'evilnc-copy-and-comment-lines
 
  (:map evil-window-map                  ; prefix "C-w"
   ;; Navigation
@@ -42,44 +42,11 @@
 
  (:localleader
   ;; Localleader keybinds are not global and requires a keymap. e.g.
-  (:map +dap-running-session-mode-map
-  ;; d is used by doom for displaying dap-hydra
-   "d"  nil)
 
   :map prog-mode-map
   :desc "quickrun compile"        "q" #'quickrun-compile-only
 
-  (:prefix ("d" . "dap debug")
-   :desc "Hydra" :n "h" #'dap-hydra
-   :desc "Run debug configuration" :n "d" #'dap-debug
-   :desc "dap-ui REPL" :n "r" #'dap-ui-repl
-   ;; :desc "Debug test function" :n "t" #'dap-python-debug-test-at-point  # TODO
-   :desc "Run last debug configuration" :n "l" #'dap-debug-last
-   :desc "Toggle breakpoint" :n "b" #'dap-breakpoint-toggle
-   :desc "dap continue" :n "c" #'dap-continue
-   :desc "dap next" :n "n" #'dap-next
-   :desc "Debug script" :n "s" #'dap-python-script
-   :desc "dap step in" :n "i" #'dap-step-in
-   :desc "dap eval at point" :n "ee" #'dap-eval-thing-at-point
-   :desc "dap eval region" :n "er" #'dap-eval-region
-   :desc "dap switch frame" :n "f" #'dap-switch-stack-frame
-   :desc "dap edit template" :n "t" #'dap-debug-edit-template
-   :desc "Disconnect" :n "q" #'dap-disconnect )
-  ) ;; end localleader
-
  (:leader
-
- (:prefix ("l" . "lsp")
-  :desc "format buffer"           "=" #'lsp-format-buffer
-  :desc "action"                  "a" #'lsp-execute-code-action
-  :desc "sideline"                "l" #'lsp-ui-sideline-mode
-  :desc "doc"                     "d" #'lsp-ui-doc-mode
-  :desc "diagnostic"              "e" #'flymake-show-diagnostics-buffer
-  :desc "imenu"                   "i" #'lsp-ui-imenu
-  :desc "rename"                  "r" #'lsp-rename
-  :desc "restart"                 "R" #'lsp-restart-workspace
-  :desc "peek"                    "w" #'lsp-ui-peek-find-workspace-symbol
-  :desc "type def"                "t" #'lsp-goto-type-definition) ;was defined for state :n
  ;; Rebind to "S"
  (:prefix ("S" . "snippets")
   :desc "New snippet"            "n" #'yas-new-snippet
@@ -90,28 +57,42 @@
   :desc "symbol overlay"         "o" #'symbol-overlay-put
   :desc "symbol remove"          "q" #'symbol-overlay-remove-all)
 
- (:after dap-mode
-  (:prefix ("d" . "debug")
-   :desc "Start debugger"         "d" #'dap-debug
-   :desc "Start last debugger"    "D" #'dap-debug-last
-   "t" #'dap-breakpoint-toggle
-   "b" #'dap-ui-breakpoints
-   "h" #'dap-hydra
-   "r" #'dap-ui-repl
-   "r" #'dap-debug-restart
-   "l" #'dap-ui-locals
-   "e" #'dap-ui-expressions
-   "a" #'dap-ui-expressions-add
-   "R" #'dap-ui-expressions-remove
-   "f" #'dap-switch-stack-frame
-   "q" #'dap-disconnect
-   "s" #'dap-ui-sessions
-   "k" #'dap-delete-session
-   "K" #'dap-delete-all-sessions))
   ) ;; end leader
- )
+ ))
 
 
+(map! :map dap-mode-map
+      :leader
+      :prefix ("d" . "dap")
+      ;; basics
+      :desc "dap next"          "n" #'dap-next
+      :desc "dap step in"       "i" #'dap-step-in
+      :desc "dap step out"      "o" #'dap-step-out
+      :desc "dap continue"      "c" #'dap-continue
+      :desc "dap hydra"         "h" #'dap-hydra
+      :desc "dap debug restart" "r" #'dap-debug-restart
+      ;; :desc "dap repl"          "r" #'dap-ui-repl
+      :desc "dap debug"         "s" #'dap-debug
+      :desc "dap disconnect"    "q" #'dap-disconnect
+
+      ;; debug
+      :prefix ("dd" . "Debug")
+      :desc "dap debug recent"  "r" #'dap-debug-recent
+      :desc "dap debug last"    "l" #'dap-debug-last
+
+      ;; eval
+      :prefix ("de" . "Eval")
+      :desc "eval"                "e" #'dap-eval
+      :desc "eval region"         "r" #'dap-eval-region
+      :desc "eval thing at point" "s" #'dap-eval-thing-at-point
+      :desc "add expression"      "a" #'dap-ui-expressions-add
+      :desc "remove expression"   "d" #'dap-ui-expressions-remove
+
+      :prefix ("db" . "Breakpoint")
+      :desc "dap breakpoint toggle"      "b" #'dap-breakpoint-toggle
+      :desc "dap breakpoint condition"   "c" #'dap-breakpoint-condition
+      :desc "dap breakpoint hit count"   "h" #'dap-breakpoint-hit-condition
+      :desc "dap breakpoint log message" "l" #'dap-breakpoint-log-message)
 
 ;; https://hungyi.net/posts/hydra-for-evil-mc/
 (defhydra my-mc-hydra (:color pink
