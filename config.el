@@ -52,15 +52,19 @@
  ;; nerd-icons-font-names '("SymbolsNerdFontMono-Regular.ttf")
 
  ispell-dictionary "english"
- ;; IMO, modern editors have trained a bad habit into us all: a burning need for
- ;; completion all the time -- as we type, as we breathe, as we pray to the
- ;; ancient ones -- but how often do you *really* need that information? I say
- ;; rarely. So opt for manual completion:
- company-idle-delay nil
+
  ;; Relative line numbers are fantastic for knowing how far away line numbers
  ;; are, then ESC 12 <UP> gets you exactly where you think.
  display-line-numbers-type 'relative
  )
+
+(after! corfu
+ ;; IMO, modern editors have trained a bad habit into us all: a burning need for
+ ;; completion all the time -- as we type, as we breathe, as we pray to the
+ ;; ancient ones -- but how often do you *really* need that information? I say
+ ;; rarely. So opt for manual completion:
+ ;; company-idle-delay nil
+  (setq corfu-auto nil))
 
 (when IS-MAC
   (setq ns-use-thin-smoothing t))

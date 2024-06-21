@@ -21,10 +21,9 @@
 
 (doom! :input
        :completion
-       (company          ; the ultimate code completion backend
-        +childFrame         ; Display completion candidates in a child frame rather than an overlay or tooltip.
-        ;; +tng             ; Enables completion using only TAB(and S-TAB) instead of C-SPC. Incompatible with +childframe.
-        )
+       ;; (company +childFrame ) ; Display completion candidates in a child frame rather than an overlay or tooltip.
+       ;; +tng             ; Enables completion using only TAB(and S-TAB) instead of C-SPC. Incompatible with +childframe.
+       corfu
        ;; (ivy              ; a search engine for love and life
        ;;  +childFrame
        ;;  +icons           ; Enables file icons for switch-{buffer,project}/find-file counsel commands.
@@ -186,7 +185,9 @@
        ;;rest              ; Emacs as a REST client
        rst               ; ReST in peace
        ;;ruby              ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
-       ;;(rust +lsp)              ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
+       (rust
+        +lsp
+        +tree-sitter)              ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        ;;scala             ; java, but good
        ;;scheme            ; a fully conniving family of lisps
        (sh
