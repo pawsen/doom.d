@@ -128,7 +128,24 @@
       org-journal-encrypt-journal t
       org-journal-file-format "%Y%m%d.org"
       org-startup-folded 'overview
-      org-ellipsis " [...] ")
+      org-ellipsis " [...] "
+
+      ;; by default org-mode table use the calc package, where * and / doesnt
+      ;; have same precedence. From
+      ;; https://emacs.stackexchange.com/a/43856/20989
+      ;; A formula can be any algebraic expression understood by the Emacs
+      ;; ‘Calc’ package. Note that ‘calc’ has the non-standard convention that
+      ;; ‘/’ has lower precedence than ‘*’, so that ‘a/b*c’ is interpreted as
+      ;; ‘a/(b*c)’.
+
+      ;; ie the result below is `1', not `4' as expected
+      ;; | 4 | 1 |
+      ;; #+TBLFM: $2=$1/2*2
+      ;;
+      ;; Setting it to nil makes multiplication have the same precedence as
+      ;; division in the default mode.
+      calc-multiplication-has-precedence 'nil
+)
 
 ;; exclude all headlines with the ATTACH tag from the Org-roam database
 ;; Customizing Node Caching
