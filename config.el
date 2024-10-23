@@ -129,6 +129,8 @@
       org-journal-file-format "%Y%m%d.org"
       org-startup-folded 'overview
       org-ellipsis " [...] "
+      ;; force SVG figures to appear inline on a white background?
+      org-inline-image-background "white"
 
       ;; by default org-mode table use the calc package, where * and / doesnt
       ;; have same precedence. From
@@ -154,6 +156,42 @@
 (setq org-roam-db-node-include-function
       (lambda ()
         (not (member "ATTACH" (org-get-tags)))))
+
+;; org-attach
+;; change org-attach (C-c C-a a / SPC m a a) default source directory
+;; temporarily set the function read-file-name to look in the target folder.
+;; https://emacs.stackexchange.com/a/73460
+(defun azr/org-attach-read-file-name-downloads (&rest args)
+  '("Select file to attach: " "~/Downloads/"))
+
+(defun azr/org-attach ()
+  (interactive)
+  (advice-add 'read-file-name :filter-args 'azr/org-attach-read-file-name-downloads)
+  (unwind-protect ; make sure to remove advice if user cancels org-attach
+      (org-attach)
+    (advice-remove 'read-file-name 'azr/org-attach-read-file-name-downloads)))
+
+;; org-hugo
+(defun org-hugo--tag-processing-fn-remove-tags-maybe (tags-list info)
+  "Remove user-specified tags/categories.
+See `org-hugo-tag-processing-functions' for more info."
+  ;; Use tag/category string (including @ prefix) exactly as used in Org file.
+  (let ((tags-categories-to-be-removed '("DONE" "ATTACH"))) ;"my_tag" "@my_cat"
+    (cl-remove-if (lambda (tag_or_cat)
+                    (member tag_or_cat tags-categories-to-be-removed))
+                  tags-list)))
+(add-to-list 'org-hugo-tag-processing-functions
+             #'org-hugo--tag-processing-fn-remove-tags-maybe)
+
+
+;; extend the list of file extentions that gets copied to the public/ox-hugo dir
+;; default is
+;; ("jpg" "jpeg" "tiff" "png" "svg" "gif" "bmp" "mp4" "pdf" "odt" "doc" "ppt" "xls"
+;; "docx" "pptx" "xlsx")
+(setq org-hugo-external-file-extensions-allowed-for-copying
+      (append org-hugo-external-file-extensions-allowed-for-copying
+              '("wav" "raw" "epub")))
+
 
 ;;; :lang web
 (use-package web-mode
@@ -432,18 +470,6 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
 (add-hook 'comint-mode-hook #'+word-wrap-mode)
 
 
-;; change org-attach (C-c C-a a / SPC m a a) default source directory
-;; temporarily set the function read-file-name to look in the target folder.
-;; https://emacs.stackexchange.com/a/73460
-(defun azr/org-attach-read-file-name-downloads (&rest args)
-  '("Select file to attach: " "~/Downloads/"))
-
-(defun azr/org-attach ()
-  (interactive)
-  (advice-add 'read-file-name :filter-args 'azr/org-attach-read-file-name-downloads)
-  (unwind-protect ; make sure to remove advice if user cancels org-attach
-      (org-attach)
-    (advice-remove 'read-file-name 'azr/org-attach-read-file-name-downloads)))
 
 (load! "+bindings")
 (load! "+comint")

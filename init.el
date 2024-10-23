@@ -162,6 +162,7 @@
         +dragndrop       ; drag & drop files/images into org buffers
         ;; +journal
         +roam2
+        +gnuplot         ; install gnuplot and gnuplot-mode, which enables rendering images from gnuplot src blocks or plotting tables with org-plot/gnuplot (bound to <localleader> b p, by default).
         +hugo            ; use Emacs for hugo blogging
         +jupyter        ; ipython/jupyter support for babel
         +pandoc          ; export-with-pandoc support
