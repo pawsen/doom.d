@@ -58,12 +58,20 @@
  display-line-numbers-type 'relative
  )
 
+;; launch emacsclient without create new workspace
+(after! persp-mode
+  ;; emacsclient opens everything in the main workspace
+  ;; (setq persp-emacsclient-init-frame-behaviour-override "main")
+
+  ;; emacsclient opens everything in the current workspace:
+  (setq persp-emacsclient-init-frame-behaviour-override
+   `(+workspace-current-name)))
+
 (after! corfu
  ;; IMO, modern editors have trained a bad habit into us all: a burning need for
  ;; completion all the time -- as we type, as we breathe, as we pray to the
  ;; ancient ones -- but how often do you *really* need that information? I say
  ;; rarely. So opt for manual completion:
- ;; company-idle-delay nil
   (setq corfu-auto nil))
 
 (when IS-MAC
@@ -161,15 +169,59 @@
 ;; change org-attach (C-c C-a a / SPC m a a) default source directory
 ;; temporarily set the function read-file-name to look in the target folder.
 ;; https://emacs.stackexchange.com/a/73460
-(defun azr/org-attach-read-file-name-downloads (&rest args)
+(defun my/org-attach-read-file-name-downloads (&rest args)
   '("Select file to attach: " "~/Downloads/"))
 
-(defun azr/org-attach ()
+(defun my/org-attach ()
   (interactive)
-  (advice-add 'read-file-name :filter-args 'azr/org-attach-read-file-name-downloads)
+  (advice-add 'read-file-name :filter-args 'my/org-attach-read-file-name-downloads)
   (unwind-protect ; make sure to remove advice if user cancels org-attach
       (org-attach)
-    (advice-remove 'read-file-name 'azr/org-attach-read-file-name-downloads)))
+    (advice-remove 'read-file-name 'my/org-attach-read-file-name-downloads)))
+
+;; rename link and org-attach file at point
+;; https://lists.gnu.org/archive/html/emacs-orgmode/2022-03/msg00213.html
+(defun my/org-rename-link-file-at-point ()
+  (interactive)
+  (let* ((curr-dir (if (equal (org-element-property :type
+                                                    (org-element-context)) "attachment")
+                       (concat (abbreviate-file-name (org-attach-dir)) "/")
+                     (abbreviate-file-name default-directory)))
+         (current-path (if (equal (org-element-property :type
+                                                        (org-element-context)) "attachment")
+                           (concat curr-dir (org-element-property :path
+                                                                  (org-element-context)))
+                         (org-element-property :path (org-element-context))))
+         (new-path (read-file-name "Rename file at point to: " current-path)))
+    (rename-file current-path new-path)
+    (message (concat "moved to: " new-path))
+    (if (directory-name-p new-path)
+        (setq new-path (concat new-path (file-name-nondirectory
+                                         current-path)))
+      (setq new-path new-path))
+    (if (equal (org-element-property :type (org-element-context))
+               "attachment")
+        (my/org-replace-link-file (file-name-nondirectory current-path)
+                                  (replace-regexp-in-string
+                                   curr-dir "" new-path))
+      (my/org-replace-link-file current-path
+                                (replace-regexp-in-string
+                                 curr-dir "" new-path)))))
+
+(defun my/org-replace-link-file (from to)
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward org-bracket-link-regexp nil t)
+      (cond ((string-match-p (concat "attachment:" from) (match-string 1))
+             (replace-match (concat "[[attachment:" to "]]")))
+            ((string-match-p from (match-string 1))
+             (replace-match (concat "[[file:" to "]]")))))))
+
+
+;; use modercn from org-mode
+(use-package!  ox-moderncv
+  :init (require 'ox-moderncv))
+
 
 ;; org-hugo
 (defun org-hugo--tag-processing-fn-remove-tags-maybe (tags-list info)
@@ -180,17 +232,19 @@ See `org-hugo-tag-processing-functions' for more info."
     (cl-remove-if (lambda (tag_or_cat)
                     (member tag_or_cat tags-categories-to-be-removed))
                   tags-list)))
-(add-to-list 'org-hugo-tag-processing-functions
-             #'org-hugo--tag-processing-fn-remove-tags-maybe)
+(after! org-hugo
+  ;; Remove user-specified tags/categories.
+  (add-to-list 'org-hugo-tag-processing-functions
+               #'org-hugo--tag-processing-fn-remove-tags-maybe)
 
-
-;; extend the list of file extentions that gets copied to the public/ox-hugo dir
-;; default is
-;; ("jpg" "jpeg" "tiff" "png" "svg" "gif" "bmp" "mp4" "pdf" "odt" "doc" "ppt" "xls"
-;; "docx" "pptx" "xlsx")
-(setq org-hugo-external-file-extensions-allowed-for-copying
-      (append org-hugo-external-file-extensions-allowed-for-copying
-              '("wav" "raw" "epub")))
+  ;; extend the list of file extentions that gets copied to the public/ox-hugo dir
+  ;; default is
+  ;; ("jpg" "jpeg" "tiff" "png" "svg" "gif" "bmp" "mp4" "pdf" "odt" "doc" "ppt" "xls"
+  ;; "docx" "pptx" "xlsx")
+  (setq org-hugo-external-file-extensions-allowed-for-copying
+        (append org-hugo-external-file-extensions-allowed-for-copying
+                '("wav" "raw" "epub" "webp")))
+  )
 
 
 ;;; :lang web
@@ -355,9 +409,6 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
       (dired dir))))
 (global-set-key (kbd "C-x C-d") 'my/ivy-dired-recent-dirs)
 
-;; use modercn from org-mode
-(use-package!  ox-moderncv
-  :init (require 'ox-moderncv))
 
 ;; enable c++ syntax highlighting for arduino
 (use-package! cc-mode
