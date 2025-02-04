@@ -111,19 +111,19 @@
 (add-hook 'compilation-finish-functions #'bury-compile-buffer-if-successful)
 
 
-;; layout rotaion
-(map! :map evil-window-map
-      "SPC" #'rotate-layout
-      ;; Navigation
-      "<left>"     #'evil-window-left
-      "<down>"     #'evil-window-down
-      "<up>"       #'evil-window-up
-      "<right>"    #'evil-window-right
-      ;; Swapping windows
-      "C-<left>"       #'+evil/window-move-left
-      "C-<down>"       #'+evil/window-move-down
-      "C-<up>"         #'+evil/window-move-up
-      "C-<right>"      #'+evil/window-move-right)
+;; ;; layout rotaion
+;; (map! :map evil-window-map
+;;       "SPC" #'rotate-layout
+;;       ;; Navigation
+;;       "<left>"     #'evil-window-left
+;;       "<down>"     #'evil-window-down
+;;       "<up>"       #'evil-window-up
+;;       "<right>"    #'evil-window-right
+;;       ;; Swapping windows
+;;       "C-<left>"       #'+evil/window-move-left
+;;       "C-<down>"       #'+evil/window-move-down
+;;       "C-<up>"         #'+evil/window-move-up
+;;       "C-<right>"      #'+evil/window-move-right)
 
 
 
@@ -138,7 +138,9 @@
       org-startup-folded 'overview
       org-ellipsis " [...] "
       ;; force SVG figures to appear inline on a white background?
-      org-inline-image-background "white"
+      ;; https://emacs.stackexchange.com/a/76561/20989
+      ;; org-inline-image-background "white"
+      ;; org-inline-image-background 'nil
 
       ;; by default org-mode table use the calc package, where * and / doesnt
       ;; have same precedence. From
@@ -156,6 +158,27 @@
       ;; division in the default mode.
       calc-multiplication-has-precedence 'nil
 )
+
+
+(defcustom org-inline-image-background nil
+  "The color used as the default background for inline images.
+When nil, use the default face background."
+  :group 'org
+  :type '(choice color (const nil)))
+
+(defun create-image-with-background-color (args)
+  "Specify background color of Org-mode inline image through modify `ARGS'."
+  (let* ((file (car args))
+         (type (cadr args))
+         (data-p (caddr args))
+         (props (cdddr args)))
+    ;; Get this return result style from `create-image'.
+    (append (list file type data-p)
+            (list :background (or org-inline-image-background (face-background 'default)))
+            props)))
+
+(advice-add 'create-image :filter-args
+            #'create-image-with-background-color)
 
 ;; exclude all headlines with the ATTACH tag from the Org-roam database
 ;; Customizing Node Caching
@@ -246,110 +269,112 @@ See `org-hugo-tag-processing-functions' for more info."
                 '("wav" "raw" "epub" "webp")))
   )
 
-
-;;; :lang web
-(use-package web-mode
-  :custom
-  (web-mode-markup-indent-offset 2)
-  (web-mode-css-indent-offset 2)
-  (web-mode-code-indent-offset 2))
-
-
-;;; :tools magit
-(use-package! magit
-  :bind (:map magit-file-section-map
-         ("M-RET" . magit-diff-visit-file-other-window)
-         :map magit-hunk-section-map
-         ("M-RET" . magit-diff-visit-file-other-window))
-  :config
-  (setq
-   magit-repository-directories '(("~/git" . 2))
-   magit-save-repository-buffers nil
-   ;; Don't restore the wconf after quitting magit, it's jarring
-   magit-inhibit-save-previous-winconf t
-   ;; sort branches by recent usage. Any git --sort keyword can be used
-   magit-list-refs-sortby "-committerdate"
-   )
-  )
-
-(after! browse-at-remote
-  ;; Use branch name not commit hash
-  (setq browse-at-remote-prefer-symbolic t)
-  ;; use regex to map domain to type of VC
-  ;; https://github.com/rmuslimov/browse-at-remote/issues/82
-  (dolist (elt '(("^git\\.magenta\\.dk$" . "gitlab")))
-    (add-to-list 'browse-at-remote-remote-type-regexps elt))
-  )
-
-;; https://github.com/alphapapa/unpackaged.el#hydra
-(use-package! smerge-mode
-  :config
-  (defhydra unpackaged/smerge-hydra
-    (:color pink :hint nil :post (smerge-auto-leave))
-    "
-^Move^       ^Keep^               ^Diff^                 ^Other^
-^^-----------^^-------------------^^---------------------^^-------
-_n_ext       _b_ase               _<_: upper/base        _C_ombine
-_p_rev       _u_pper              _=_: upper/lower       _r_esolve
-^^           _l_ower              _>_: base/lower        _k_ill current
-^^           _a_ll                _R_efine
-^^           _RET_: current       _E_diff
-"
-    ("n" smerge-next)
-    ("p" smerge-prev)
-    ("b" smerge-keep-base)
-    ("u" smerge-keep-upper)
-    ("l" smerge-keep-lower)
-    ("a" smerge-keep-all)
-    ("RET" smerge-keep-current)
-    ("\C-m" smerge-keep-current)
-    ("<" smerge-diff-base-upper)
-    ("=" smerge-diff-upper-lower)
-    (">" smerge-diff-base-lower)
-    ("R" smerge-refine)
-    ("E" smerge-ediff)
-    ("C" smerge-combine-with-next)
-    ("r" smerge-resolve)
-    ("k" smerge-kill-current)
-    ("ZZ" (lambda ()
-            (interactive)
-            (save-buffer)
-            (bury-buffer))
-     "Save and bury buffer" :color blue)
-    ("q" nil "cancel" :color blue))
-  :hook (magit-diff-visit-file . (lambda ()
-                                   (when smerge-mode
-                                     (unpackaged/smerge-hydra/body)))))
+(use-package! gptel
+ :config
+ (setq! gptel-api-key "your key"))
+;; ;;; :lang web
+;; (use-package web-mode
+;;   :custom
+;;   (web-mode-markup-indent-offset 2)
+;;   (web-mode-css-indent-offset 2)
+;;   (web-mode-code-indent-offset 2))
 
 
-;;; :app everywhere
-;; Easier to match with a bspwm rule:
-;;   bspc rule -a 'Emacs:emacs-everywhere' state=floating sticky=on
-(setq emacs-everywhere-frame-name-format "emacs-anywhere")
+;; :tools magit
+;; (use-package! magit
+;;   ;; :bind (:map magit-file-section-map
+;;   ;;        ("M-RET" . magit-diff-visit-file-other-window)
+;;   ;;        :map magit-hunk-section-map
+;;   ;;        ("M-RET" . magit-diff-visit-file-other-window))
+;;   :config
+;;   (setq
+;;    ;; magit-repository-directories '(("~/git" . 2))
+;;    ;; magit-save-repository-buffers nil
+;;    ;; Don't restore the wconf after quitting magit, it's jarring
+;;    ;; magit-inhibit-save-previous-winconf t
+;;    ;; sort branches by recent usage. Any git --sort keyword can be used
+;;    magit-list-refs-sortby "-committerdate"
+;;    )
+;;   )
 
-;; The modeline is not useful to me in the popup window. It looks much nicer
-;; to hide it.
-(add-hook 'emacs-everywhere-init-hooks #'hide-mode-line-mode)
+;; (after! browse-at-remote
+;;   ;; Use branch name not commit hash
+;;   (setq browse-at-remote-prefer-symbolic t)
+;;   ;; use regex to map domain to type of VC
+;;   ;; https://github.com/rmuslimov/browse-at-remote/issues/82
+;;   (dolist (elt '(("^git\\.magenta\\.dk$" . "gitlab")))
+;;     (add-to-list 'browse-at-remote-remote-type-regexps elt))
+;;   )
 
-;; disable opening up the *Messages* buffer when clicking the on the minibuffer
-(define-key minibuffer-inactive-mode-map [mouse-1] #'ignore)
+;; ;; ;; https://github.com/alphapapa/unpackaged.el#hydra
+;; ;; (use-package! smerge-mode
+;; ;;   :config
+;; ;;   (defhydra unpackaged/smerge-hydra
+;; ;;     (:color pink :hint nil :post (smerge-auto-leave))
+;; ;;     "
+;; ;; ^Move^       ^Keep^               ^Diff^                 ^Other^
+;; ;; ^^-----------^^-------------------^^---------------------^^-------
+;; ;; _n_ext       _b_ase               _<_: upper/base        _C_ombine
+;; ;; _p_rev       _u_pper              _=_: upper/lower       _r_esolve
+;; ;; ^^           _l_ower              _>_: base/lower        _k_ill current
+;; ;; ^^           _a_ll                _R_efine
+;; ;; ^^           _RET_: current       _E_diff
+;; ;; "
+;; ;;     ("n" smerge-next)
+;; ;;     ("p" smerge-prev)
+;; ;;     ("b" smerge-keep-base)
+;; ;;     ("u" smerge-keep-upper)
+;; ;;     ("l" smerge-keep-lower)
+;; ;;     ("a" smerge-keep-all)
+;; ;;     ("RET" smerge-keep-current)
+;; ;;     ("\C-m" smerge-keep-current)
+;; ;;     ("<" smerge-diff-base-upper)
+;; ;;     ("=" smerge-diff-upper-lower)
+;; ;;     (">" smerge-diff-base-lower)
+;; ;;     ("R" smerge-refine)
+;; ;;     ("E" smerge-ediff)
+;; ;;     ("C" smerge-combine-with-next)
+;; ;;     ("r" smerge-resolve)
+;; ;;     ("k" smerge-kill-current)
+;; ;;     ("ZZ" (lambda ()
+;; ;;             (interactive)
+;; ;;             (save-buffer)
+;; ;;             (bury-buffer))
+;; ;;      "Save and bury buffer" :color blue)
+;; ;;     ("q" nil "cancel" :color blue))
+;; ;;   :hook (magit-diff-visit-file . (lambda ()
+;; ;;                                    (when smerge-mode
+;; ;;                                      (unpackaged/smerge-hydra/body)))))
 
-;; Semi-center it over the target window, rather than at the cursor position
-;; (which could be anywhere).
-(defadvice! my-emacs-everywhere-set-frame-position (&rest _)
-  :override #'emacs-everywhere-set-frame-position
-  (cl-destructuring-bind (width . height)
-      (alist-get 'outer-size (frame-geometry))
-    (set-frame-position (selected-frame)
-                        (+ emacs-everywhere-window-x
-                           (/ emacs-everywhere-window-width 2)
-                           (- (/ width 2)))
-                        (+ emacs-everywhere-window-y
-                           (/ emacs-everywhere-window-height 2)))))
+
+;; ;;; :app everywhere
+;; ;; Easier to match with a bspwm rule:
+;; ;;   bspc rule -a 'Emacs:emacs-everywhere' state=floating sticky=on
+;; (setq emacs-everywhere-frame-name-format "emacs-anywhere")
+
+;; ;; The modeline is not useful to me in the popup window. It looks much nicer
+;; ;; to hide it.
+;; (add-hook 'emacs-everywhere-init-hooks #'hide-mode-line-mode)
+
+;; ;; disable opening up the *Messages* buffer when clicking the on the minibuffer
+;; (define-key minibuffer-inactive-mode-map [mouse-1] #'ignore)
+
+;; ;; Semi-center it over the target window, rather than at the cursor position
+;; ;; (which could be anywhere).
+;; ;; (defadvice! my-emacs-everywhere-set-frame-position (&rest _)
+;; ;;   :override #'emacs-everywhere-set-frame-position
+;; ;;   (cl-destructuring-bind (width . height)
+;; ;;       (alist-get 'outer-size (frame-geometry))
+;; ;;     (set-frame-position (selected-frame)
+;; ;;                         (+ emacs-everywhere-window-x
+;; ;;                            (/ emacs-everywhere-window-width 2)
+;; ;;                            (- (/ width 2)))
+;; ;;                         (+ emacs-everywhere-window-y
+;; ;;                            (/ emacs-everywhere-window-height 2)))))
 
 
-;;; custom
-;; run M-x projectile-discover-projects-in-search after changing this
+;; ;;; custom
+;; ;; run M-x projectile-discover-projects-in-search after changing this
 (setq projectile-project-search-path '("~/git")
       ;; don't undo too much at once
       evil-want-fine-undo t)
@@ -358,56 +383,37 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
 (after! recentf
   (add-to-list 'recentf-exclude "/var"))
 
-;;; dired
-;; dired extensions, most live as modules in dired-hacks
-;; https://github.com/Fuco1/dired-hacks/tree/master
-;; most are configured in evil-collection
-;; https://github.com/emacs-evil/evil-collection/blob/master/modes/dired/evil-collection-dired.el
+;; ;;; dired
+;; ;; dired extensions, most live as modules in dired-hacks
+;; ;; https://github.com/Fuco1/dired-hacks/tree/master
+;; ;; most are configured in evil-collection
+;; ;; https://github.com/emacs-evil/evil-collection/blob/master/modes/dired/evil-collection-dired.el
 
-;; http://pragmaticemacs.com/emacs/copy-and-paste-files-with-dired-ranger/
-(use-package! dired-ranger
-  :init (require 'dired-ranger)
-  :bind (:map dired-mode-map
-         ("W" . dired-ranger-copy)
-         ("X" . dired-ranger-move)
-         ("Y" . dired-ranger-paste)))
-(use-package! dired-subtree
-  :init (require 'dired-subtree)
-  :bind (:map dired-mode-map
-         ("<backtab>" . dired-subtree-cycle)))
-(use-package! dired-collapse
-   :init (require 'dired-collapse))
-(use-package! dired-filter
-  :init (require 'dired-filter))
-;; http://pragmaticemacs.com/emacs/dynamically-filter-directory-listing-with-dired-narrow/
-(use-package! dired-narrow
-  :init (require 'dired-narrow)
-  :bind (:map dired-mode-map
-         ("/" . dired-narrow)))
-;; http://pragmaticemacs.com/emacs/speedy-sorting-in-dired-with-dired-quick-sort
-(use-package! dired-quick-sort
-  :init (require 'dired-quick-sort)
-  :config
-  (dired-quick-sort-setup))
-
-;; open recent directory, requires ivy (part of swiper)
-;; borrows from http://stackoverflow.com/questions/23328037/in-emacs-how-to-maintain-a-list-of-recent-directories
-(defun my/ivy-dired-recent-dirs ()
-  "Present a list of recently used directories and open the selected one in dired"
-  (interactive)
-  (let ((recent-dirs
-         (delete-dups
-          (mapcar (lambda (file)
-                    (if (file-directory-p file) file (file-name-directory file)))
-                  recentf-list))))
-
-    (let ((dir (ivy-read "Directory: "
-                         recent-dirs
-                         :re-builder #'ivy--regex
-                         :sort nil
-                         :initial-input nil)))
-      (dired dir))))
-(global-set-key (kbd "C-x C-d") 'my/ivy-dired-recent-dirs)
+;; ;; http://pragmaticemacs.com/emacs/copy-and-paste-files-with-dired-ranger/
+;; ;; (use-package! dired-ranger
+;; ;;   :init (require 'dired-ranger)
+;; ;;   :bind (:map dired-mode-map
+;; ;;          ("W" . dired-ranger-copy)
+;; ;;          ("X" . dired-ranger-move)
+;; ;;          ("Y" . dired-ranger-paste)))
+;; ;; (use-package! dired-subtree
+;; ;;   :init (require 'dired-subtree)
+;; ;;   :bind (:map dired-mode-map
+;; ;;          ("<backtab>" . dired-subtree-cycle)))
+;; ;; (use-package! dired-collapse
+;; ;;    :init (require 'dired-collapse))
+;; ;; (use-package! dired-filter
+;; ;;   :init (require 'dired-filter))
+;; ;; ;; http://pragmaticemacs.com/emacs/dynamically-filter-directory-listing-with-dired-narrow/
+;; ;; (use-package! dired-narrow
+;; ;;   :init (require 'dired-narrow)
+;; ;;   :bind (:map dired-mode-map
+;; ;;          ("/" . dired-narrow)))
+;; ;; ;; http://pragmaticemacs.com/emacs/speedy-sorting-in-dired-with-dired-quick-sort
+;; ;; (use-package! dired-quick-sort
+;; ;;   :init (require 'dired-quick-sort)
+;; ;;   :config
+;; ;;   (dired-quick-sort-setup))
 
 
 ;; enable c++ syntax highlighting for arduino
@@ -416,113 +422,137 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
   :mode ("\\.pde\\'" . c++-mode)
   )
 
-;; Turn on flymake, with appropriate check-syntax in Makefile
-;; XXX the string-matching does not work.
-;; (add-hook! 'cc-mode-hook #'my-cc-mode-hook)
-;; (defun my-cc-mode-hook ()
-;;   "Custom `cc-mode' behaviours."
-;;   (and buffer-file-name
-;;        (string-match "/\\(?:\\.ino\\)/" buffer-file-name)
-;;        (flymake-mode 1)))
+;; ;; Turn on flymake, with appropriate check-syntax in Makefile
+;; ;; XXX the string-matching does not work.
+;; ;; (add-hook! 'cc-mode-hook #'my-cc-mode-hook)
+;; ;; (defun my-cc-mode-hook ()
+;; ;;   "Custom `cc-mode' behaviours."
+;; ;;   (and buffer-file-name
+;; ;;        (string-match "/\\(?:\\.ino\\)/" buffer-file-name)
+;; ;;        (flymake-mode 1)))
 
 
-;; for translations. The version on melpa does not work for me, instead
-;; sudo apt install gettext-el
-(use-package! po-mode
-  :load-path "/usr/share/emacs/site-lisp/"
-  :mode
-  "\\.po\\'"
-  ;;"\\.po\\."
-  ;;:commands (po-mode)
-  )
+;; ;; for translations. The version on melpa does not work for me, instead
+;; ;; sudo apt install gettext-el
+;; ;; (use-package! po-mode
+;; ;;   :load-path "/usr/share/emacs/site-lisp/"
+;; ;;   :mode
+;; ;;   "\\.po\\'"
+;; ;;   ;;"\\.po\\."
+;; ;;   ;;:commands (po-mode)
+;; ;;   )
 
-(after! po-mode
-  ;; You can use the following code to automatically spell check translated
-  ;; message strings using a dictionary appropriate for the language of the PO
-  ;; file.
+;; ;; (after! po-mode
+;; ;;   ;; You can use the following code to automatically spell check translated
+;; ;;   ;; message strings using a dictionary appropriate for the language of the PO
+;; ;;   ;; file.
 
-  (defun po-guess-language ()
-    "Return the language related to this PO file."
-    (save-excursion
-      (goto-char (point-min))
-      (re-search-forward po-any-msgstr-block-regexp)
-      (goto-char (match-beginning 0))
-      (if (re-search-forward
-           "\n\"Language: +\\(.+\\)\\\\n\"$"
-           (match-end 0) t)
-          (po-match-string 1))))
+;; ;;   (defun po-guess-language ()
+;; ;;     "Return the language related to this PO file."
+;; ;;     (save-excursion
+;; ;;       (goto-char (point-min))
+;; ;;       (re-search-forward po-any-msgstr-block-regexp)
+;; ;;       (goto-char (match-beginning 0))
+;; ;;       (if (re-search-forward
+;; ;;            "\n\"Language: +\\(.+\\)\\\\n\"$"
+;; ;;            (match-end 0) t)
+;; ;;           (po-match-string 1))))
 
-  (defadvice po-edit-string (around setup-spell-checking (string type expand-tabs) activate)
-    "Set up spell checking in subedit buffer."
-    (let ((po-language (po-guess-language)))
-      ad-do-it
-      (if po-language
-          (progn
-            (ispell-change-dictionary po-language)
-            (turn-on-flyspell)
-            (flyspell-buffer)))))
-  )
-
-
-(add-hook! 'prog-mode-hook #'auto-fill-mode)
-
-;; https://emacs-lsp.github.io/lsp-mode/tutorials/how-to-turn-off/
-(after! lsp-mode
-  (setq
-   lsp-enable-symbol-highlighting nil
-   ;; If an LSP server isn't present when I start a prog-mode buffer, you
-   ;; don't need to tell me. I know. On some systems I don't care to have a
-   ;; whole development environment for some ecosystems.
-   lsp-enable-suggest-server-download nil
-
-   lsp-headerline-breadcrumb-enable t
-   ;; lsp-enable-symbol-highlighting nil
-   ;; lsp-enable-file-watchers nil
-
-   ;; Don’t guess project root
-   ;; In case we get a wrong workspace root, we can delete it with
-   ;; lsp-workspace-folders-remove
-   ;; lsp-auto-guess-root nil
-   ;; +lsp-company-backends '(company-capf :with company-yasnippet)
-   ))
-(after! lsp-ui
-  (setq lsp-ui-sideline-enable nil  ; no more useful than flycheck
-        lsp-ui-doc-enable nil))     ; redundant with K
-
-(after! lsp-clients
-  (set-lsp-priority! 'clangd 1))  ; ccls has priority 0
-
-(after! dap-mode
-  ;; DAP expects ptvsd by default as the Python debugger, however debugpy is recommended.
-  (setq dap-python-debugger 'debugpy)
+;; ;;   (defadvice po-edit-string (around setup-spell-checking (string type expand-tabs) activate)
+;; ;;     "Set up spell checking in subedit buffer."
+;; ;;     (let ((po-language (po-guess-language)))
+;; ;;       ad-do-it
+;; ;;       (if po-language
+;; ;;           (progn
+;; ;;             (ispell-change-dictionary po-language)
+;; ;;             (turn-on-flyspell)
+;; ;;             (flyspell-buffer)))))
+;; ;;   )
 
 
-  (defun my/show-debug-windows (session)
-    "Show debug windows."
-    (let ((lsp--cur-workspace (dap--debug-session-workspace session)))
-      (save-excursion
-        (unless (my/window-visible dap-ui--repl-buffer)
-          (dap-ui-repl)))))
+;; (add-hook! 'prog-mode-hook #'auto-fill-mode)
 
-  (add-hook 'dap-stopped-hook 'my/show-debug-windows)
+;; ;; https://emacs-lsp.github.io/lsp-mode/tutorials/how-to-turn-off/
+;; (after! lsp-mode
+;;   (setq
+;;    lsp-enable-symbol-highlighting nil
+;;    ;; If an LSP server isn't present when I start a prog-mode buffer, you
+;;    ;; don't need to tell me. I know. On some systems I don't care to have a
+;;    ;; whole development environment for some ecosystems.
+;;    lsp-enable-suggest-server-download nil
 
-  (defun my/hide-debug-windows (session)
-    "Hide debug windows when all debug sessions are dead."
-    (unless (-filter 'dap--session-running (dap--get-sessions))
-      (and (get-buffer dap-ui--repl-buffer)
-           (kill-buffer dap-ui--repl-buffer)
-           (get-buffer dap-ui--debug-window-buffer)
-           (kill-buffer dap-ui--debug-window-buffer))))
+;;    lsp-headerline-breadcrumb-enable t
+;;    ;; lsp-enable-symbol-highlighting nil
+;;    ;; lsp-enable-file-watchers nil
 
-  (add-hook 'dap-terminated-hook 'my/hide-debug-windows)
-  )
-(add-hook 'special-mode-hook #'+word-wrap-mode)
-;; for all REPLs?
-(add-hook 'comint-mode-hook #'+word-wrap-mode)
+;;    ;; Don’t guess project root
+;;    ;; In case we get a wrong workspace root, we can delete it with
+;;    ;; lsp-workspace-folders-remove
+;;    ;; lsp-auto-guess-root nil
+;;    ;; +lsp-company-backends '(company-capf :with company-yasnippet)
+;;    ))
+;; (after! lsp-ui
+;;   (setq lsp-ui-sideline-enable nil  ; no more useful than flycheck
+;;         lsp-ui-doc-enable nil))     ; redundant with K
+
+;; (after! lsp-clients
+;;   (set-lsp-priority! 'clangd 1))  ; ccls has priority 0
+
+;; (after! dap-mode
+;;   ;; DAP expects ptvsd by default as the Python debugger, however debugpy is recommended.
+;;   (setq dap-python-debugger 'debugpy)
 
 
+;;   (defun my/show-debug-windows (session)
+;;     "Show debug windows."
+;;     (let ((lsp--cur-workspace (dap--debug-session-workspace session)))
+;;       (save-excursion
+;;         (unless (my/window-visible dap-ui--repl-buffer)
+;;           (dap-ui-repl)))))
 
-(load! "+bindings")
-(load! "+comint")
+;;   (add-hook 'dap-stopped-hook 'my/show-debug-windows)
+
+;;   (defun my/hide-debug-windows (session)
+;;     "Hide debug windows when all debug sessions are dead."
+;;     (unless (-filter 'dap--session-running (dap--get-sessions))
+;;       (and (get-buffer dap-ui--repl-buffer)
+;;            (kill-buffer dap-ui--repl-buffer)
+;;            (get-buffer dap-ui--debug-window-buffer)
+;;            (kill-buffer dap-ui--debug-window-buffer))))
+
+;;   (add-hook 'dap-terminated-hook 'my/hide-debug-windows)
+;;   )
+;; (add-hook 'special-mode-hook #'+word-wrap-mode)
+;; ;; for all REPLs?
+;; (add-hook 'comint-mode-hook #'+word-wrap-mode)
+
+;;
+;;; Language customizations
+(use-package! agenix
+  :mode ("\\.age\\'" . agenix-mode)
+  :config
+  (add-to-list 'agenix-key-files "~/.config/ssh/id_ed25519")
+  (add-to-list 'agenix-key-files "/etc/ssh/host_ed25519")
+  (dolist (file (doom-glob "~/.config/ssh/*/id_ed25519"))
+    (add-to-list 'agenix-key-files file)))
+
+
+(defun my-c-style ()
+  "Set up my custom C/C++ style."
+  (setq c-file-style "llvm"           ;; Use LLVM style
+        indent-tabs-mode nil          ;; Use spaces instead of tabs
+        c-basic-offset 4              ;; Set indentation width to 4 spaces
+        c-brace-offset 0              ;; No extra indentation for braces ()
+                                      ;; Keeps braces on the same line as statements.
+        c-indent-level 4              ;; Indentation level (same as c-basic-offset)
+        tab-width 4                   ;; Tab width
+        fill-column 100)              ;; Set max line length for comments
+)
+
+(add-hook 'c-mode-hook 'my-c-style)
+(add-hook 'c++-mode-hook 'my-c-style)
+
+;; (load! "+bindings")
+;; (load! "+comint")
 ;;(load! "+magit")
 ;;(load! "+mail")
