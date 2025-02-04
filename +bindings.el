@@ -125,7 +125,7 @@ Current pattern: %`evil-mc-pattern
   ("<escape>" #'evil-mc-resume-cursors "quit" :color blue))
 
 (map!
- (:when (featurep! :editor multiple-cursors)
+ (:when (modulep! :editor multiple-cursors)
   :prefix "g"
   :nv "z" #'my-mc-hydra/body))
 

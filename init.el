@@ -23,7 +23,7 @@
        :completion
        ;; (company +childFrame ) ; Display completion candidates in a child frame rather than an overlay or tooltip.
        ;; +tng             ; Enables completion using only TAB(and S-TAB) instead of C-SPC. Incompatible with +childframe.
-       corfu
+       (corfu +orderless)
        ;; (ivy              ; a search engine for love and life
        ;;  +childFrame
        ;;  +icons           ; Enables file icons for switch-{buffer,project}/find-file counsel commands.
@@ -50,7 +50,7 @@
        ;;tabs              ; an tab bar for Emacs
        ;; treemacs          ; a project drawer, like neotree but cooler
        ;;unicode           ; extended unicode support for various languages
-       (vc-gutter +pretty)  ; vcs diff in the fringe
+       (vc-gutter +pretty +diff-hl)  ; vcs diff in the fringe
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
        ;; window-select     ; visually switch windows
        workspaces        ; tab emulation, persistence & separate workspaces
@@ -58,7 +58,7 @@
 
        :editor
        (evil +everywhere); come to the dark side, we have cookies
-       file-templates    ; auto-snippets for empty files
+       ;; file-templates    ; auto-snippets for empty files
        fold              ; (nigh) universal code folding
        (format) ; +onsave)  ; automated prettiness
        ;;god               ; run Emacs commands without modifier keys
@@ -73,7 +73,7 @@
        :emacs
        (dired
         ;; I use ranger because it can show thumbnails out-of-the-box
-        +ranger         ; making dired pretty [functional]
+        +dirvish         ; making dired pretty [functional]
         +icons)
        electric          ; smarter, keyword-based electric-indent
        ; ibuffer           ; interactive buffer management
@@ -108,7 +108,7 @@
        (lsp +peek)
        (magit)             ; a git porcelain for Emacs
        ;; +forge)          ; porcelain for managing issues and PRs from within Emacs.
-       ;; make              ; run make tasks from Emacs
+       make              ; run make tasks from Emacs
        ;; (pass +auth)        ; password manager for nerds
        pdf               ; pdf enhancements
        ;;prodigy           ; FIXME managing external services & code builders
@@ -148,7 +148,7 @@
        ;; (javascript +lsp +tree-sitter)       ; all(hope(abandon(ye(who(enter(here))))))
        ;;julia             ; a better, faster MATLAB
        ;;kotlin            ; a better, slicker Java(Script)
-       latex             ; writing papers in Emacs has never been so fun
+       (latex +cdlatex)    ; writing papers in Emacs has never been so fun
        ;;lean
        ;;ledger            ; an accounting system in Emacs
        ;;lua               ; one-based indices? one-based indices
@@ -200,7 +200,8 @@
        (web                ; the tubes
         +lsp
         +tree-sitter
-        +web-django-mode)
+        ;; +web-django-mode)
+        )
        yaml                ; JSON, but readable
 
        :email
@@ -221,5 +222,5 @@
        (default +bindings +smartparens)
 
        :private
-       my-python
+       ;; my-python
 )
