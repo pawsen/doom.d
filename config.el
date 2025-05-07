@@ -269,9 +269,9 @@ See `org-hugo-tag-processing-functions' for more info."
                 '("wav" "raw" "epub" "webp")))
   )
 
-(use-package! gptel
- :config
- (setq! gptel-api-key "your key"))
+;(use-package! gptel
+; :config
+; (setq! gptel-api-key "your key"))
 ;; ;;; :lang web
 ;; (use-package web-mode
 ;;   :custom
@@ -421,6 +421,43 @@ See `org-hugo-tag-processing-functions' for more info."
   :mode ("\\.ino\\'" . c++-mode)
   :mode ("\\.pde\\'" . c++-mode)
   )
+
+;;
+(defun my/is-platformio-project ()
+  "Check if the current buffer is in a PlatformIO project (has platformio.ini)."
+  (when-let ((proj-root (projectile-project-root)))
+    (file-exists-p (expand-file-name "platformio.ini" proj-root))))
+
+(defun my/set-platformio-compile-command ()
+  "Set `compile-command' to 'pio run' (from project root) if in a PlatformIO project."
+  (when (my/is-platformio-project)
+    (setq-local compile-command
+                (concat "cd " (projectile-project-root) " && pio run"))))
+
+(defun my/platformio-command (command)
+  "Run a PlatformIO COMMAND from the project root using Projectile."
+  (if-let ((proj-root (projectile-project-root)))
+      (let ((default-directory proj-root))
+        (unless (file-exists-p (expand-file-name "platformio.ini" proj-root))
+          (user-error "Not a PlatformIO project (no platformio.ini found)"))
+        (compile command))
+    (user-error "Not in a project")))
+
+(defun my/set-platformio-keys ()
+  "Setup PlatformIO keybindings under SPC c p prefix."
+  (when (my/is-platformio-project)
+    (map! :map (c-mode-map c++-mode-map)
+          :leader
+          :prefix ("cp" . "pio")
+          :desc "run"     "r" #'(lambda () (interactive) (my/platformio-command "pio run"))
+          :desc "test"    "t" #'(lambda () (interactive) (my/platformio-command "pio test"))
+          :desc "upload"  "u" #'(lambda () (interactive) (my/platformio-command "pio run --target upload"))
+          :desc "monitor" "m" #'(lambda () (interactive) (my/platformio-command "pio device monitor")))))
+
+(add-hook 'c-mode-hook #'my/set-platformio-compile-command)
+(add-hook 'c++-mode-hook #'my/set-platformio-compile-command)
+(add-hook 'c-mode-hook #'my/set-platformio-keys)
+(add-hook 'c++-mode-hook #'my/set-platformio-keys)
 
 ;; ;; Turn on flymake, with appropriate check-syntax in Makefile
 ;; ;; XXX the string-matching does not work.

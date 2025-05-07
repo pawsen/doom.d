@@ -65,4 +65,4 @@
 
 ;; modes
 ;; (package! symbol-overlay) ; mark symbols
-(package! gptel)
+;;(package! gptel)
