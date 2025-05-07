@@ -21,7 +21,9 @@
 
 (doom! :input
        :completion
-       (corfu +dabbrev +icons)
+       ;; orderless:
+       ;; ressing C-SPC again while completing inserts a space as separator. This allows searching with space-separated terms; each piece will match individually and in any order, with smart casing. Pressing just SPC acts as normal and quits completion
+       (corfu +dabbrev +icons +orderless)
        (vertico + icons)  ; the search engine of the future
 
        :ui
@@ -162,7 +164,7 @@
         ;+poetry
         ;+pyenv
         +pyright
-        +tree-sitter)      ; Leverages tree-sitter for better syntax highlighting
+        +tree-sitter)
        ;;qt
        ;;racket            ; a DSL for DSLs
        ;;rest              ; Emacs as a REST client

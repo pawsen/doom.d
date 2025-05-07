@@ -58,6 +58,33 @@
  display-line-numbers-type 'relative
  )
 
+;;
+;;; Keybinds
+
+(map! (:after evil-org
+       :map evil-org-mode-map
+       :n "gk" (cmds! (org-on-heading-p)
+                      #'org-backward-element
+                      #'evil-previous-visual-line)
+       :n "gj" (cmds! (org-on-heading-p)
+                      #'org-forward-element
+                      #'evil-next-visual-line))
+
+      :o "o" #'evil-inner-symbol
+
+      :leader
+      (:prefix "n"
+       "b" #'org-roam-buffer-toggle
+       "d" #'org-roam-dailies-goto-today
+       "D" #'org-roam-dailies-goto-date
+       "e" (cmd! (find-file (doom-path org-directory "ledger/personal.gpg")))
+       "i" #'org-roam-node-insert
+       "r" #'org-roam-node-find
+       "R" #'org-roam-capture))
+
+
+;;; Modules
+
 ;; launch emacsclient without create new workspace
 (after! persp-mode
   ;; emacsclient opens everything in the main workspace
@@ -180,13 +207,31 @@ When nil, use the default face background."
 (advice-add 'create-image :filter-args
             #'create-image-with-background-color)
 
-;; exclude all headlines with the ATTACH tag from the Org-roam database
-;; Customizing Node Caching
-;; https://www.orgroam.com/manual.html#Customizing-Node-Caching
-;; (specific  https://www.orgroam.com/manual.html#What-to-cache-1 )
-(setq org-roam-db-node-include-function
-      (lambda ()
-        (not (member "ATTACH" (org-get-tags)))))
+(after! org-roam
+  ;; Offer completion for #tags and @areas separately from notes.
+  (add-to-list 'org-roam-completion-functions #'org-roam-complete-tag-at-point)
+
+  ;; Automatically update the slug in the filename when #+title: has changed.
+  (add-hook 'org-roam-find-file-hook #'org-roam-update-slug-on-save-h)
+
+  ;; Open in focused buffer, despite popups
+  (advice-add #'org-roam-node-visit :around #'+popup-save-a)
+
+  ;; Make sure tags in vertico are sorted by insertion order, instead of
+  ;; arbitrarily (due to the use of group_concat in the underlying SQL query).
+  (advice-add #'org-roam-node-list :filter-return #'org-roam-restore-insertion-order-for-tags-a)
+
+  ;; Add ID, Type, Tags, and Aliases to top of backlinks buffer.
+  (advice-add #'org-roam-buffer-set-header-line-format :after #'org-roam-add-preamble-a)
+
+  ;; exclude all headlines with the ATTACH tag from the Org-roam database
+  ;; Customizing Node Caching
+  ;; https://www.orgroam.com/manual.html#Customizing-Node-Caching
+  ;; (specific  https://www.orgroam.com/manual.html#What-to-cache-1 )
+  (setq org-roam-db-node-include-function
+        (lambda ()
+          (not (member "ATTACH" (org-get-tags)))))
+)
 
 ;; org-attach
 ;; change org-attach (C-c C-a a / SPC m a a) default source directory
@@ -281,21 +326,22 @@ See `org-hugo-tag-processing-functions' for more info."
 
 
 ;; :tools magit
-;; (use-package! magit
-;;   ;; :bind (:map magit-file-section-map
-;;   ;;        ("M-RET" . magit-diff-visit-file-other-window)
-;;   ;;        :map magit-hunk-section-map
-;;   ;;        ("M-RET" . magit-diff-visit-file-other-window))
-;;   :config
-;;   (setq
-;;    ;; magit-repository-directories '(("~/git" . 2))
-;;    ;; magit-save-repository-buffers nil
-;;    ;; Don't restore the wconf after quitting magit, it's jarring
-;;    ;; magit-inhibit-save-previous-winconf t
-;;    ;; sort branches by recent usage. Any git --sort keyword can be used
-;;    magit-list-refs-sortby "-committerdate"
-;;    )
-;;   )
+(use-package! magit
+  ;; :bind (:map magit-file-section-map
+  ;;        ("M-RET" . magit-diff-visit-file-other-window)
+  ;;        :map magit-hunk-section-map
+  ;;        ("M-RET" . magit-diff-visit-file-other-window))
+  :config
+  (setq
+   magit-show-long-lines-warning nil
+   magit-repository-directories '(("~/git" . 2))
+   ;; magit-save-repository-buffers nil
+   ;; Don't restore the wconf after quitting magit, it's jarring
+   magit-inhibit-save-previous-winconf t
+   ;; sort branches by recent usage. Any git --sort keyword can be used
+   magit-list-refs-sortby "-committerdate"
+   )
+  )
 
 ;; (after! browse-at-remote
 ;;   ;; Use branch name not commit hash
@@ -347,31 +393,8 @@ See `org-hugo-tag-processing-functions' for more info."
 ;; ;;                                      (unpackaged/smerge-hydra/body)))))
 
 
-;; ;;; :app everywhere
-;; ;; Easier to match with a bspwm rule:
-;; ;;   bspc rule -a 'Emacs:emacs-everywhere' state=floating sticky=on
-;; (setq emacs-everywhere-frame-name-format "emacs-anywhere")
-
-;; ;; The modeline is not useful to me in the popup window. It looks much nicer
-;; ;; to hide it.
-;; (add-hook 'emacs-everywhere-init-hooks #'hide-mode-line-mode)
-
 ;; ;; disable opening up the *Messages* buffer when clicking the on the minibuffer
 ;; (define-key minibuffer-inactive-mode-map [mouse-1] #'ignore)
-
-;; ;; Semi-center it over the target window, rather than at the cursor position
-;; ;; (which could be anywhere).
-;; ;; (defadvice! my-emacs-everywhere-set-frame-position (&rest _)
-;; ;;   :override #'emacs-everywhere-set-frame-position
-;; ;;   (cl-destructuring-bind (width . height)
-;; ;;       (alist-get 'outer-size (frame-geometry))
-;; ;;     (set-frame-position (selected-frame)
-;; ;;                         (+ emacs-everywhere-window-x
-;; ;;                            (/ emacs-everywhere-window-width 2)
-;; ;;                            (- (/ width 2)))
-;; ;;                         (+ emacs-everywhere-window-y
-;; ;;                            (/ emacs-everywhere-window-height 2)))))
-
 
 ;; ;;; custom
 ;; ;; run M-x projectile-discover-projects-in-search after changing this
@@ -458,16 +481,6 @@ See `org-hugo-tag-processing-functions' for more info."
 (add-hook 'c++-mode-hook #'my/set-platformio-compile-command)
 (add-hook 'c-mode-hook #'my/set-platformio-keys)
 (add-hook 'c++-mode-hook #'my/set-platformio-keys)
-
-;; ;; Turn on flymake, with appropriate check-syntax in Makefile
-;; ;; XXX the string-matching does not work.
-;; ;; (add-hook! 'cc-mode-hook #'my-cc-mode-hook)
-;; ;; (defun my-cc-mode-hook ()
-;; ;;   "Custom `cc-mode' behaviours."
-;; ;;   (and buffer-file-name
-;; ;;        (string-match "/\\(?:\\.ino\\)/" buffer-file-name)
-;; ;;        (flymake-mode 1)))
-
 
 ;; ;; for translations. The version on melpa does not work for me, instead
 ;; ;; sudo apt install gettext-el
@@ -572,22 +585,6 @@ See `org-hugo-tag-processing-functions' for more info."
   (add-to-list 'agenix-key-files "/etc/ssh/host_ed25519")
   (dolist (file (doom-glob "~/.config/ssh/*/id_ed25519"))
     (add-to-list 'agenix-key-files file)))
-
-
-(defun my-c-style ()
-  "Set up my custom C/C++ style."
-  (setq c-file-style "llvm"           ;; Use LLVM style
-        indent-tabs-mode nil          ;; Use spaces instead of tabs
-        c-basic-offset 4              ;; Set indentation width to 4 spaces
-        c-brace-offset 0              ;; No extra indentation for braces ()
-                                      ;; Keeps braces on the same line as statements.
-        c-indent-level 4              ;; Indentation level (same as c-basic-offset)
-        tab-width 4                   ;; Tab width
-        fill-column 100)              ;; Set max line length for comments
-)
-
-(add-hook 'c-mode-hook 'my-c-style)
-(add-hook 'c++-mode-hook 'my-c-style)
 
 ;; (load! "+bindings")
 ;; (load! "+comint")
