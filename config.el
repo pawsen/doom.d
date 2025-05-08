@@ -519,8 +519,10 @@ See `org-hugo-tag-processing-functions' for more info."
 ;; ;;             (flyspell-buffer)))))
 ;; ;;   )
 
-
-;; (add-hook! 'prog-mode-hook #'auto-fill-mode)
+;; setq-hook!: Sets buffer-local variables
+;; add-hook!: Runs arbitrary functions/forms (like enabling modes)
+(add-hook! 'prog-mode-hook #'auto-fill-mode)
+(setq-hook! 'prog-mode-hook fill-column 100)
 
 ;; ;; https://emacs-lsp.github.io/lsp-mode/tutorials/how-to-turn-off/
 ;; (after! lsp-mode
