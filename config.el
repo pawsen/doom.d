@@ -482,6 +482,69 @@ See `org-hugo-tag-processing-functions' for more info."
 (add-hook 'c-mode-hook #'my/set-platformio-keys)
 (add-hook 'c++-mode-hook #'my/set-platformio-keys)
 
+;; convert org-mode to a .txt file for copy-pasting as a FB one-post, multiple comments
+(defun my/org-to-facebook-thread-buffer ()
+  "Convert the current org buffer into a Facebook post + comment thread.
+The first top-level heading becomes the main post, and the rest become comment threads.
+Result is inserted into a new buffer for easy copy-paste."
+  (interactive)
+  (let* ((lines (split-string (buffer-substring-no-properties (point-min) (point-max)) "\n"))
+         (main-post nil)
+         (comments '())
+         (current-block nil)
+         (block-type nil)) ;; 'main or 'comment
+
+    ;; Helper: clean and transform Org formatting
+    (defun fb-clean-line (line)
+      (setq line (replace-regexp-in-string
+                  "\\[\\[\\(https?://[^]]+\\)\\]\\[\\([^]]+\\)\\]\\]"
+                  "\\2: \\1" line))
+      (setq line (replace-regexp-in-string "\\[\\[\\(https?://[^]]+\\)\\]\\]" "\\1" line))
+      (setq line (replace-regexp-in-string "^#\\+CAPTION: *\\(.*\\)" "📸 \\1" line))
+      (setq line (replace-regexp-in-string "\\[\\[\\(.*?\\.(jpg\\|jpeg\\|png|gif)\\)\\]\\]" "[Attach image: \\1]" line))
+      line)
+
+    ;; Parse the lines
+    (dolist (line lines)
+      (setq line (fb-clean-line line))
+      (cond
+       ((string-match "^\\* " line)
+        (when current-block
+          (let ((text (string-join (reverse current-block) "\n")))
+            (if (eq block-type 'main)
+                (setq main-post text)
+              (push text comments))))
+        (setq current-block (list (concat "🔷 " (string-trim (substring line 2)))))
+        (setq block-type (if main-post 'comment 'main)))
+
+       ((string-match "^\\*\\* " line)
+        (push (concat "🔸 " (string-trim (substring line 3))) current-block))
+
+       ((and current-block)
+        (push (string-trim line) current-block))
+
+       (t nil)))
+
+    ;; Push the last block
+    (when current-block
+      (let ((text (string-join (reverse current-block) "\n")))
+        (if (eq block-type 'main)
+            (setq main-post text)
+          (push text comments))))
+
+    ;; Create and populate output buffer
+    (let ((buf (get-buffer-create "*Facebook Thread*")))
+      (with-current-buffer buf
+        (erase-buffer)
+        (insert "==== FACEBOOK MAIN POST ====\n\n")
+        (insert (or main-post "") "\n\n")
+        (let ((i 1))
+          (dolist (comment (reverse comments))
+            (insert (format "==== COMMENT %d ====\n\n%s\n\n" i comment))
+            (setq i (1+ i)))))
+      (pop-to-buffer buf))))
+
+
 ;; ;; for translations. The version on melpa does not work for me, instead
 ;; ;; sudo apt install gettext-el
 ;; ;; (use-package! po-mode
