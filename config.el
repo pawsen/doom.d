@@ -237,15 +237,27 @@ When nil, use the default face background."
 ;; change org-attach (C-c C-a a / SPC m a a) default source directory
 ;; temporarily set the function read-file-name to look in the target folder.
 ;; https://emacs.stackexchange.com/a/73460
-(defun my/org-attach-read-file-name-downloads (&rest args)
-  '("Select file to attach: " "~/Downloads/"))
+(defvar my/org-attach-last-dir "~/Downloads/"
+  "Last directory used for attaching files with `my/org-attach`.")
+
+(defun my/org-attach-read-file-name-remember-last-dir (args)
+  "Modify `read-file-name` ARGS to use `my/org-attach-last-dir`."
+  (let ((prompt (or (nth 0 args) "Select file to attach: "))
+        (dir my/org-attach-last-dir))
+    (list prompt dir)))
 
 (defun my/org-attach ()
+  "Temporarily change the default directory used by `org-attach`."
   (interactive)
-  (advice-add 'read-file-name :filter-args 'my/org-attach-read-file-name-downloads)
-  (unwind-protect ; make sure to remove advice if user cancels org-attach
-      (org-attach)
-    (advice-remove 'read-file-name 'my/org-attach-read-file-name-downloads)))
+  (advice-add 'read-file-name :filter-args #'my/org-attach-read-file-name-remember-last-dir)
+  ;; make sure to remove advice if user cancels org-attach
+  (unwind-protect
+      (let ((file (org-attach)))
+        ;; Update last dir based on selected file, if any
+        (when (and file (stringp file))
+          (setq my/org-attach-last-dir (file-name-directory file))))
+    (advice-remove 'read-file-name #'my/org-attach-read-file-name-remember-last-dir)))
+
 
 ;; https://lists.gnu.org/archive/html/emacs-orgmode/2022-03/msg00213.html
 (defun my/org-rename-link-file-at-point ()
