@@ -187,6 +187,24 @@
 )
 
 
+;; set the default application for org-open-file-at-point(RET or C-c C-o)
+;; Invoking org-open-at-point with two universal arguments (SPC u SPC u RET) will forcibly open that
+;; link in your system default app.
+;; With a single universal argument, org tries to open the link in Emacs.
+(after! org
+  ;; always open externally
+  (add-to-list 'org-file-apps '("\\.docx\\'" . "xdg-open %s"))
+  (add-to-list 'org-file-apps '("\\.pdf\\'" . "xdg-open %s")))
+
+;; Using C-u C-u RET on a link will use the 'system configuration', which is the value
+;; returned by M-: (mailcap-mime-info "application/pdf")
+;; This value can be configured via the variable mailcap-user-mime-data
+(setq mailcap-user-mime-data
+      '(("application/pdf" . ((viewer . "firefox %s")
+                              (test . (executable-find "firefox"))
+                              (type . "application/pdf")))))
+
+
 (defcustom org-inline-image-background nil
   "The color used as the default background for inline images.
 When nil, use the default face background."
