@@ -247,9 +247,9 @@ When nil, use the default face background."
       (org-attach)
     (advice-remove 'read-file-name 'my/org-attach-read-file-name-downloads)))
 
-;; rename link and org-attach file at point
 ;; https://lists.gnu.org/archive/html/emacs-orgmode/2022-03/msg00213.html
 (defun my/org-rename-link-file-at-point ()
+  "rename link and org-attach file at point"
   (interactive)
   (let* ((curr-dir (if (equal (org-element-property :type
                                                     (org-element-context)) "attachment")
@@ -279,7 +279,7 @@ When nil, use the default face background."
 (defun my/org-replace-link-file (from to)
   (save-excursion
     (goto-char (point-min))
-    (while (re-search-forward org-bracket-link-regexp nil t)
+    (while (re-search-forward org-link-bracket-re nil t)
       (cond ((string-match-p (concat "attachment:" from) (match-string 1))
              (replace-match (concat "[[attachment:" to "]]")))
             ((string-match-p from (match-string 1))
