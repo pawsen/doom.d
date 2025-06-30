@@ -278,42 +278,61 @@ When nil, use the default face background."
 
 
 ;; https://lists.gnu.org/archive/html/emacs-orgmode/2022-03/msg00213.html
-(defun my/org-rename-link-file-at-point ()
-  "rename link and org-attach file at point"
-  (interactive)
-  (let* ((curr-dir (if (equal (org-element-property :type
-                                                    (org-element-context)) "attachment")
-                       (concat (abbreviate-file-name (org-attach-dir)) "/")
-                     (abbreviate-file-name default-directory)))
-         (current-path (if (equal (org-element-property :type
-                                                        (org-element-context)) "attachment")
-                           (concat curr-dir (org-element-property :path
-                                                                  (org-element-context)))
-                         (org-element-property :path (org-element-context))))
-         (new-path (read-file-name "Rename file at point to: " current-path)))
-    (rename-file current-path new-path)
-    (message (concat "moved to: " new-path))
-    (if (directory-name-p new-path)
-        (setq new-path (concat new-path (file-name-nondirectory
-                                         current-path)))
-      (setq new-path new-path))
-    (if (equal (org-element-property :type (org-element-context))
-               "attachment")
-        (my/org-replace-link-file (file-name-nondirectory current-path)
-                                  (replace-regexp-in-string
-                                   curr-dir "" new-path))
-      (my/org-replace-link-file current-path
-                                (replace-regexp-in-string
-                                 curr-dir "" new-path)))))
+(defun my/org-rename-link-file-at-point (&optional update-all)
+  "Rename the file at point and update all links in the buffer if UPDATE-ALL is non-nil."
+  (interactive "P") ;; Use prefix argument (C-u) to update all
+  (let* ((context (org-element-context))
+         (type (org-element-property :type context))         ;; e.g. "file" or "attachment"
+         (path (org-element-property :path context))         ;; The file path part of the link
+         (start (org-element-property :begin context))       ;; Start of the whole link
+         (end (org-element-property :end context))           ;; End of the whole link
+         (desc (org-element-property :contents-begin context)) ;; Beginning of the description (if present)
+         ;; Extract the link description, if any
+         (description (when desc
+                        (buffer-substring-no-properties
+                         desc (org-element-property :contents-end context))))
+         (fullpath (cond
+                    ((string= type "attachment")
+                     (expand-file-name path (org-attach-dir)))
+                    ((string= type "file")
+                     (expand-file-name path))
+                    (t (user-error "Not a file or attachment link"))))
+         (newpath (read-file-name "Rename to: " fullpath))
+         (display-path
+          (cond
+           ((string= type "attachment")
+            (file-name-nondirectory newpath))
+           ((string= type "file")
+            (let ((abbrev (abbreviate-file-name newpath)))
+              (if (string-prefix-p "~/" path)
+                  abbrev
+                (file-relative-name newpath))))
+           (t (user-error "Unhandled link type")))))
+    (rename-file fullpath newpath 1)
+    (if update-all
+        ;; Replace all occurrences of the old path
+        (my/org-rename-link-file-at-point--replace-all path display-path)
+      ;; Just replace the link at point
+      (save-excursion
+        (goto-char start)
+        (delete-region start end)
+        (insert (if description
+                    (format "[[%s:%s][%s]]" type display-path description)
+                  (format "[[%s:%s]]" type display-path)))))
+    (message "Renamed file and updated %s link(s) to: %s"
+             (if update-all "all" "current") display-path)))
 
-(defun my/org-replace-link-file (from to)
+
+(defun my/org-rename-link-file-at-point--replace-all (old new)
+  "Replace all links to OLD path with NEW path in the current buffer."
   (save-excursion
     (goto-char (point-min))
-    (while (re-search-forward org-link-bracket-re nil t)
-      (cond ((string-match-p (concat "attachment:" from) (match-string 1))
-             (replace-match (concat "[[attachment:" to "]]")))
-            ((string-match-p from (match-string 1))
-             (replace-match (concat "[[file:" to "]]")))))))
+    (let ((re (concat "\\[\\[\\(file\\|attachment\\):" (regexp-quote old) "\\]\\(\\[[^]]*\\]\\)?\\]")))
+      (while (re-search-forward re nil t)
+        (let* ((desc (match-string 2))
+               (type (match-string 1)))
+          (replace-match (format "[[%s:%s]%s]"
+                                 type new (or desc ""))))))))
 
 
 ;; use modercn from org-mode
