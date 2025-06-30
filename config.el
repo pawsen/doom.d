@@ -252,6 +252,13 @@ When nil, use the default face background."
 )
 
 ;; org-attach
+(after! org-attach
+  ;; https://emacs.stackexchange.com/a/82392
+  (setq org-attach-preferred-new-method 'dir)
+  ;; XXX this should probably be uncommented
+  ;; (setq org-attach-dir-relative 't)
+  )
+
 ;; change org-attach (C-c C-a a / SPC m a a) default source directory
 ;; temporarily set the function read-file-name to look in the target folder.
 ;; https://emacs.stackexchange.com/a/73460

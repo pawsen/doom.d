@@ -61,7 +61,6 @@
 
        :emacs
        (dired
-        ;; I use ranger because it can show thumbnails out-of-the-box
         +dirvish         ; making dired pretty [functional]
         +icons)
        electric          ; smarter, keyword-based electric-indent
