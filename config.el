@@ -370,6 +370,14 @@ See `org-hugo-tag-processing-functions' for more info."
                 '("wav" "raw" "epub" "webp")))
   )
 
+(use-package! dirvish
+  :config
+  ;; live preview
+  (dirvish-peek-mode)
+  ;; The default setting of dirvish-peek-key is any which means that dirvish-peek-mode triggers the
+  ;; preview immediately on any key press when the selected candidate changes.
+  (setq dirvish-peek-key "M-."))
+
 ;(use-package! gptel
 ; :config
 ; (setq! gptel-api-key "your key"))
