@@ -400,34 +400,30 @@ See `org-hugo-tag-processing-functions' for more info."
     vals))
 
 (defun my/ox-hugo-copy-link-img (outfile)
-  "Copy wildcard images declared with :link-img: into the bundle DIR."
+  "Copy all wildcards in :link-img: into the bundle dir of OUTFILE."
   (when (and outfile (file-exists-p outfile))
-    (let* ((bundle-dir (file-name-directory outfile))
-           (base-dir   (file-name-directory (buffer-file-name)))
-           (patterns   (my/ox-hugo--all-link-img-values 'subtree-only)))
-      (dolist (pattern patterns)
-        (let* ((abs-pattern (expand-file-name pattern base-dir))
-               (matches     (file-expand-wildcards abs-pattern t)))
+    (let* ((bundle (file-name-directory outfile))
+           (base   (file-name-directory (buffer-file-name))))
+      (dolist (pat (my/ox-hugo--all-link-img-values))
+        (let* ((abs   (expand-file-name pat base))
+               (files (file-expand-wildcards abs t)))
           (when my/ox-hugo-copy-verbose
-            (message "[ox-hugo] %s ⇒ %d match(es)"
-                     abs-pattern (length matches)))
-          (dolist (src matches)
-            (let ((dest (expand-file-name (file-name-nondirectory src)
-                                          bundle-dir)))
+            (message "[ox-hugo] %s ⇒ %d match(s)" abs (length files)))
+          (dolist (src files)
+            (let ((dest (expand-file-name (file-name-nondirectory src) bundle)))
               (when my/ox-hugo-copy-verbose
                 (message "[ox-hugo] copy %s → %s" src dest))
               (copy-file src dest :ok-if-already-exists t))))))))
 
+(defun my/ox-hugo-copy-wim-advice (orig &rest args)
+  "Around-advice: run ORIG, then copy :link-img: files."
+  (let ((outfile (apply orig args)))  ; run the real exporter
+    (my/ox-hugo-copy-link-img outfile)
+    outfile))
 
 (after! ox-hugo
-  ;; (advice-remove 'org-hugo-export-wim-to-md
-  ;;                #'my/ox-hugo-copy-wim-advice)
   (advice-add 'org-hugo-export-wim-to-md :around
-              (lambda (orig-fun &rest args)
-                (let ((outfile (apply orig-fun args))) ; run real export
-                  (my/ox-hugo-copy-link-img outfile)   ; then copy
-                  outfile)))                           ; preserve behaviour
-  )
+              #'my/ox-hugo-copy-wim-advice))
 
 
 (use-package! dirvish
