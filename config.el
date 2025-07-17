@@ -356,6 +356,8 @@ See `org-hugo-tag-processing-functions' for more info."
     (cl-remove-if (lambda (tag_or_cat)
                     (member tag_or_cat tags-categories-to-be-removed))
                   tags-list)))
+
+
 (after! org-hugo
   ;; Remove user-specified tags/categories.
   (add-to-list 'org-hugo-tag-processing-functions
@@ -369,6 +371,64 @@ See `org-hugo-tag-processing-functions' for more info."
         (append org-hugo-external-file-extensions-allowed-for-copying
                 '("wav" "raw" "epub" "webp")))
   )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; copy images to the hugo bundle dir
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; List the images to copy in the properties drawer using link-img key.
+;; :PROPERTIES:
+;; :link-img:  some/folder/some*.jpg
+;; :link-img:  some/folder/other*.jpg
+;; :END:
+(defvar my/ox-hugo-copy-verbose t
+  "When non-nil, print diagnostics while copying :link-img: files.")
+
+(defun my/ox-hugo--all-link-img-values (&optional subtree-only)
+  "Return a list of all :link-img: property values in current subtree."
+  (let* ((parse (if subtree-only
+                    (org-element-parse-buffer 'element)
+                  (org-element-parse-buffer)))
+         (vals
+          (org-element-map parse 'node-property
+            (lambda (np)
+              (when (string-equal (downcase (org-element-property :key np))
+                                  "link-img")
+                (string-trim (org-element-property :value np))))
+            nil nil t)))
+    (when my/ox-hugo-copy-verbose
+      (message "[ox-hugo] link-img patterns: %S" vals))
+    vals))
+
+(defun my/ox-hugo-copy-link-img (outfile)
+  "Copy wildcard images declared with :link-img: into the bundle DIR."
+  (when (and outfile (file-exists-p outfile))
+    (let* ((bundle-dir (file-name-directory outfile))
+           (base-dir   (file-name-directory (buffer-file-name)))
+           (patterns   (my/ox-hugo--all-link-img-values 'subtree-only)))
+      (dolist (pattern patterns)
+        (let* ((abs-pattern (expand-file-name pattern base-dir))
+               (matches     (file-expand-wildcards abs-pattern t)))
+          (when my/ox-hugo-copy-verbose
+            (message "[ox-hugo] %s ⇒ %d match(es)"
+                     abs-pattern (length matches)))
+          (dolist (src matches)
+            (let ((dest (expand-file-name (file-name-nondirectory src)
+                                          bundle-dir)))
+              (when my/ox-hugo-copy-verbose
+                (message "[ox-hugo] copy %s → %s" src dest))
+              (copy-file src dest :ok-if-already-exists t))))))))
+
+
+(after! ox-hugo
+  ;; (advice-remove 'org-hugo-export-wim-to-md
+  ;;                #'my/ox-hugo-copy-wim-advice)
+  (advice-add 'org-hugo-export-wim-to-md :around
+              (lambda (orig-fun &rest args)
+                (let ((outfile (apply orig-fun args))) ; run real export
+                  (my/ox-hugo-copy-link-img outfile)   ; then copy
+                  outfile)))                           ; preserve behaviour
+  )
+
 
 (use-package! dirvish
   :config
