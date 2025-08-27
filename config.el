@@ -156,7 +156,7 @@
 
 ;;; Modules
 ;;; :lang org
-(setq org-directory "~/git/org/"
+(setq org-directory "~/git/notes/"
       org-archive-location (concat org-directory ".archive/%s::")
       org-roam-directory (concat org-directory "notes/")
       org-roam-db-location (concat org-roam-directory ".org-roam.db")
