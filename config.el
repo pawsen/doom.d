@@ -427,6 +427,15 @@ See `org-hugo-tag-processing-functions' for more info."
 
 
 (use-package! dirvish
+  :custom
+  (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
+   '(("h" "~/"                          "Home")
+     ("d" "~/Downloads/"                "Downloads")
+     ("g" "~/git/"                       "git")
+     ("a" "~/git/notes/.attach"          "attach")
+     ("t" "~/.local/share/Trash/files/" "Trash")))
+     ;; ("s" "/ssh:my-remote-server")      "SSH server"
+     ;; ("e" "/sudo:root@localhost:/etc")  "Modify program settings"
   :config
   ;; live preview
   (dirvish-peek-mode)
